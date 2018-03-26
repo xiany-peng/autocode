@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 
 @ServletComponentScan
-@MapperScan("com.shulipeng.dao.*.*")
+@MapperScan("com.shulipeng.dao")
 @SpringBootApplication
 public class AutocodeApplication {
 

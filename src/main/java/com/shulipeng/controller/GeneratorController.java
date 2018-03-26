@@ -17,6 +17,7 @@ import java.util.List;
  * @date 2018/3/25
  */
 @Controller
+@RequestMapping("/generator")
 public class GeneratorController {
 
     private static final String prefix = "/generator";
@@ -26,7 +27,7 @@ public class GeneratorController {
 
     @GetMapping("")
     String generator(){
-        return prefix + "/list";
+        return prefix + "/generator";
     }
 
     @PostMapping("/list")

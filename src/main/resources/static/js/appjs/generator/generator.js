@@ -1,0 +1,7 @@
+$(function(){
+   loadTable();
+});
+
+function loadTable(){
+
+}
