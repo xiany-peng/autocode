@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
     <meta charset="UTF-8">
-    <title>代码生成器主页面</title>
-    <link rel="shortcut icon" href="favicon.ico">
-    <link href="/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
-    <link href="/css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
-    <link href="/css/animate.css" rel="stylesheet">
-    <link href="/css/style.css?v=4.1.0" rel="stylesheet">
-</head>
-<body class="">
-
-<!-- 全局js -->
-<script src="/js/jquery.min.js?v=2.1.4"></script>
-<script src="/js/bootstrap.min.js?v=3.3.6"></script>
-<script type="text/javascript" src="/js/contabs.js"></script>
-<!-- 自定义js -->
+    <head th:include="include::header"></head>
+<body class="gray-bg">
+    <div class="wrapper wrapper-content">
+        <div class="col-sm-12">
+            <div class="ibox">
+                <div class="ibox-body">
+                    <div id="exampleToolbar" role="group">
+                        <button class="btn btn-sm btn-primary">配置</button>
+                        <button class="btn btn-sm btn-success" onclick="batchCode()">批量生成</button>
+                    </div>
+                    <table id="exampleTable"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+<div th:include="include::footer"></div>
 <script src="/js/appjs/generator/generator.js"></script>
 </body>
 </html>

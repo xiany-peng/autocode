@@ -1,14 +1,16 @@
 package com.shulipeng.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.shulipeng.domain.Table;
 import com.shulipeng.service.GeneratorService;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -36,4 +38,42 @@ public class GeneratorController {
         return generatorService.list();
     }
 
+    /**
+     * 单个生成代码
+     * @param request
+     * @param response
+     * @param tableName
+     */
+    @GetMapping("/code/{tableName}")
+    void code(HttpServletRequest request, HttpServletResponse response,
+              @PathVariable("tableName") String tableName) throws IOException {
+        String[] tableNames = new String[] { tableName };
+        byte[] data = generatorService.generatorCode(tableNames);
+        response.reset();
+        response.setHeader("Content-Disposition", "attachment; filename=\"bootdo.zip\"");
+        response.addHeader("Content-Length", "" + data.length);
+        response.setContentType("application/octet-stream; charset=UTF-8");
+
+        IOUtils.write(data, response.getOutputStream());
+    }
+
+    /**
+     * 批量生成代码
+     * @param request
+     * @param response
+     * @param tables
+     * @throws IOException
+     */
+    @GetMapping("/batchCode")
+    void batchCode(HttpServletRequest request, HttpServletResponse response,
+               String tables) throws IOException {
+        String[] tableNames = new String[] {};
+        tableNames = JSON.parseArray(tables).toArray(tableNames);
+        byte[] data = generatorService.generatorCode(tableNames);
+        response.reset();
+        response.setHeader("Content-Disposition", "attachment; filename=\"bootdo.zip\"");
+        response.addHeader("Content-Length", "" + data.length);
+        response.setContentType("application/octet-stream; charset=UTF-8");
+        IOUtils.write(data, response.getOutputStream());
+    }
 }

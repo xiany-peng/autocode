@@ -18,16 +18,9 @@ public interface GeneratorService {
     List<Table> list();
 
     /**
-     * 通过表名查询
-     * @param tableName
+     * 生成代码
+     * @param tableNames
      * @return
      */
-    Table get(String tableName);
-
-    /**
-     * 查询一个表所有的列
-     * @param tableName
-     * @return
-     */
-    List<Column> listColumns(String tableName);
+    byte[] generatorCode(String[] tableNames);
 }

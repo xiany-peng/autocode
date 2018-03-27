@@ -1,5 +1,9 @@
 package com.shulipeng.dao;
 
+import com.shulipeng.domain.Table;
+
+import java.util.List;
+
 /**
  * @author pengxianyang
  * @Description:
