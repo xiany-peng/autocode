@@ -4,45 +4,113 @@
 <mapper namespace="${package}.dao.${className}Mapper}">
 
     <!-- 增加 -->
-    <select id="insert" resultType="${package}.entity.${className}" #if($pk.extra == 'auto_increment') useGeneratedKeys="true" keyProperty="$pk.attrNameSmall"#end >
-        insert into ${tableName}(
-#if($pk.extra != 'auto_increment')
-  `$pk.columnName`
-#end
-         `$pk.columnName` $pk.attrNameSmall,
+    <select id="insert" parameterType="${package}.entity.${className}" #if($pk.extra == 'auto_increment') useGeneratedKeys="true" keyProperty="$pk.attrNameSmall"#end >
+        insert into ${tableName}
+        (
 #foreach($column in $columns)
-        `$coulmn.columnName` $column.attrNameSmall,
+#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
+         `$column.attrNameSmall`#if($velocityCount != $columns.size()),#end
+
 #end
-        `table_name` tableName,
-        `table_comment` tableComment,
-        `create_time` createTime
-        from information_schema.tables
-        where table_schema = (select database())
+#end
+        )
+        values
+        (
+#foreach($column in $columns)
+#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
+         #{$column.attrNameSmall}#if($velocityCount != $columns.size()),#end
+
+#end
+#end
+        )
     </select>
 
-    <!-- 通过表名查询 -->
-    <select id="get" resultType="com.shulipeng.domain.Table">
+#if($isLogicDelete)
+    <!-- 逻辑删除 -->
+    <delete id="deleteLogic" >
+        update ${tableName} set is_delete = 1
+        where $pk.columnName = #{$pk.attrNameSmall}
+    </delete>
+#else
+    <!-- 物理删除 -->
+    <delete id="deleteLogic" >
+        delete from ${tableName}
+        where $pk.columnName = #{$pk.attrNameSmall}
+    </delete>
+#end
+
+#if($batchRemove)
+    <!-- 批量删除 -->
+    <delete id="batchRemove" >
+#if($isLogicDelete)
+        update ${tableName} set is_delete = 1
+#else
+        delete from ${tableName}
+#end
+        where $pk.columnName in
+        <foreach collection="array" item="${pk.attrNameSmall}" open="(" separator="," close="(">
+            (#{$pk.attrNameSmall})
+        </foreach>
+    </delete>
+#end
+
+    <!-- 修改 -->
+    <update id="update" parameterType="${package}.entity.${className}">
+        update ${tableName}
+        <set>
+#foreach($column in $columns)
+#if($column.columnName != $pk.columnName)
+        <if test="$column.attrNameSmall != null">`$column.columnName` = #{$column.attrNameSmall},</if>
+#end
+#end
+        </set>
+        where $pk.columnName = #{$pk.attrNameSmall}
+    </update>
+
+    <!-- 通过主键ID查询 -->
+    <select id="get" resultType="${package}.entity.${className}">
         select
-        `table_name` tableName,
-        `table_comment` tableComment,
-        `create_time` createTime
-        from information_schema.tables
-        where table_schema = (select database())
-        and table_name = #{tableName}
+#foreach($column in $columns)
+        t.`${column.columnName}` $column.attrNameSmall #if($velocityCount != $columns.size()),#end
+
+#end
+        from ${tableName} t
+        where t.${pk.columnName} = #{$pk.attrNameSmall}
     </select>
 
-    <!-- 查询一个表所有列 -->
-    <select id="listColumns" resultType="com.shulipeng.domain.Column">
+    <!-- 多条件查询 -->
+    <select id="list" resultType="${package}.entity.${className}">
         select
-        `column_name` columnName,
-        `data_type` dataType,
-        `column_comment` comment,
-        `column_key` columnKey,
-        `extra`
-        from information_schema.columns
-        where table_name = #{tableName}
-        and table_schema = (select database())
-        order by ordinal_position
+#foreach($column in $columns)
+            t.`${column.columnName}` $column.attrNameSmall#if($velocityCount != $columns.size()),#end
+
+#end
+        from ${tableName} t
+        where 1 = 1
+#if($isLogicDelete)
+        and t.is_delete = 0
+#end
+#foreach($column in $columns)
+        <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">and t.${column.columnName} = #{$column.attrNameSmall}</if>
+#end
     </select>
 
+#if($fuzzyLookup)
+    <!-- 多条件模糊查询 -->
+    <select id="listByFuzzy" resultType="${package}.entity.${className}">
+        select
+#foreach($column in $columns)
+            t.`${column.columnName}` $column.attrNameSmall#if($velocityCount != $columns.size()),#end
+
+#end
+        from ${tableName} t
+        where 1=1
+#if($isLogicDelete)
+        and t.is_delete = 0
+#end
+#foreach($column in $columns)
+        <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">and t.${column.columnName} = #{$column.attrNameSmall}</if>
+#end
+    </select>
+#end
 </mapper>

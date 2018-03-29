@@ -1,0 +1,124 @@
+package ${package}.controller;
+
+import com.shulipeng.utils.R;
+import com.shulipeng.utils.Page;
+import org.apache.commons.lang3.StringUtils;
+
+import org.springframework.ui.Model;
+import ${package}.entity.${className};
+import ${package}.service.${className}Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+
+/**
+ * @author ${author}
+ * @date ${datetime}
+ * @company ${company}
+ * @description $!{comment}
+ */
+@Controller
+@RequestMapping("/${classNameSmall}")
+public class GeneratorController {
+
+    private static final String prefix = "/${classNameSmall}";
+
+    @Autowired
+    ${className}Service ${classNameSmall}Service;
+
+    /**
+     * 进入页面
+     * @return
+     */
+    @GetMapping("")
+    String to${className}Page(){
+        return prefix + "/list";
+    }
+
+#if($sidePagination == "server")
+    /**
+    * 多条件#if($fuzzyLookup)模糊#end 查询并且分页显示
+    * @param ${classNameSmall}
+    * @param offset
+    * @param limit
+    * @return
+    */
+    @RequestMapping(value = "/list")
+    @ResponseBody
+    public Page list(${className} ${classNameSmall},String offset,String limit) {
+        Page page = new Page();
+        page.setPageNumber((Integer.valueOf(offset) / (Integer.valueOf(pageSize))));
+        page.setPageSize(Integer.valueOf(pageSize));
+        page = ${classNameSmall}Service.list(${classNameSmall}, page);
+        return page;
+    }
+#else
+    /**
+     * 多条件#if($fuzzyLookup)模糊#end 查询
+     * @param ${classNameSmall}
+     * @return
+     */
+    @RequestMapping(value = "/list")
+    @ResponseBody
+    public List<${className}> list(${className} ${classNameSmall}) {
+#if($fuzzyLookup)
+    return ${classNameSmall}Service.listByFuzzy(${classNameSmall});
+#else
+    return ${classNameSmall}Service.list(${classNameSmall});
+#end
+    }
+#end
+
+    /**
+     * 进入编辑页面
+     * @param model
+     * @param $pk.attrNameSmall
+     * @return
+     */
+    @GetMapping("/edit")
+    String add(Model model,$pk.attrType $pk.attrNameSmall){
+        ${className} $classNameSmall = null;
+#if($pk.attrType == 'Long' || $pk.attrType == "Integer")
+        if($pk.attrNameSmall != null){
+#else
+        if(StringUtils.isNotBlank($pk.attrNameSmall)){
+#end
+        $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
+        }
+        model.addAttribute("$classNameSmall", $classNameSmall);
+
+        return prefix + "/edit";
+    }
+
+    /**
+     * 保存
+     * @param ${classNameSmall}
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/save")
+    public R save( ${className} ${classNameSmall}){
+    if(${classNameSmall}Service.save(${classNameSmall})>0){
+        return R.ok();
+    }
+    return R.error();
+	}
+
+    /**
+     * 删除
+     * @param $pk.attrNameSmall
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/save")
+    public R save( $pk.attrType $pk.attrNameSmall){
+        if(${classNameSmall}Service.delete(${classNameSmall})>0){
+            return R.ok();
+        }
+        return R.error();
+    }
+
+}

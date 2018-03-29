@@ -1,0 +1,88 @@
+package ${package}.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import ${package}.entity.${className};
+import java.util.List;
+#if($sidePagination == "server")
+import ${package}.utils.Page;
+#end
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+/**
+ * @author ${author}
+ * @date ${datetime}
+ * @company ${company}
+ * @description $!{comment}
+ */
+@Service
+public class ${className}ServiceImpl implements ${className}Service {
+
+    @Autowired
+    private ${className}Mapper ${classNameSmall}Mapper;
+
+    @Override
+    int insert(${className} ${classNameSmall}){
+        return ${classNameSmall}Mapper.insert(${classNameSmall});
+    }
+
+#if($isLogicDelete)
+    @Override
+    int deleteLogic($pk.attrType $pk.attrNameSmall){
+        return ${classNameSmall}Mapper.deleteLogic($pk.attrNameSmall);
+    }
+#else
+    @Override
+    int delete($pk.attrType $pk.attrNameSmall){
+        return ${classNameSmall}Mapper.delete($pk.attrNameSmall);
+    }
+#end
+
+#if($batchRemove)
+    @Override
+    int batchDelete(${pk.attrType}[] ${pk.attrNameSmall}s){
+        return ${classNameSmall}Mapper.batchDelete(${pk.attrNameSmall}s);
+    }
+#end
+
+    @Override
+    int update($pk.attrType $pk.attrNameSmall){
+        return ${classNameSmall}Mapper.update($pk.attrNameSmall);
+    }
+
+    @Override
+    ${className} get($pk.attrType $pk.attrNameSmall){
+        return ${classNameSmall}Mapper.get($pk.attrNameSmall);
+    }
+
+    @Override
+    List<${className}> list(${className} ${classNameSmall}){
+        return ${classNameSmall}Mapper.list(${classNameSmall});
+    }
+
+#if($fuzzyLookup)
+    @Override
+    List<${className}> listByFuzzy(${className} ${classNameSmall}){
+        return ${classNameSmall}Mapper.listByFuzzy(${classNameSmall});
+    }
+#end
+
+#if($sidePagination == "server")
+    @Override
+    Page listData(${className} ${classNameSmall}, Page page){
+        PageHelper.startPage(page.getPageNumber(), page.getPageSize());
+#if($fuzzyLookup)
+        List<${className}> list = this.listByFuzzy(${classNameSmall});
+#else
+        List<${className}> list = this.list(${classNameSmall});
+#end
+        PageInfo<${className}> pageInfo = new PageInfo<${className}>(list);
+        page.setTotal(String.valueOf(pageInfo.getTotal()));
+        page.setRows(pageInfo.getList());
+        return page;
+    }
+#end
+
+}

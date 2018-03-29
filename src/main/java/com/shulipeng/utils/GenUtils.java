@@ -63,7 +63,7 @@ public class GenUtils {
             if("BigDecimal".equals(column.getAttrType())){
                 isNeedBigDecimal = true;
             }
-            if("is_delete".equalsIgnoreCase(column.getColumnName())){
+            if("is_delete".equalsIgnoreCase(column.getColumnName()) && "Integer".equals(column.getAttrType())){
                 isLogicDelete = true;
             }
 
@@ -98,10 +98,12 @@ public class GenUtils {
         map.put("isLogicDelete", isLogicDelete);//是否含有软删标志
         map.put("batchRemove", config.getBoolean("batchRemove",true));//是否含有软删标志
         map.put("fuzzyLookup", config.getBoolean("fuzzyLookup",false));//是否需要模糊查询
+        map.put("sidePagination", config.getString("sidePagination","server"));//分页方式，
         VelocityContext context = new VelocityContext(map);
 
         //4.获取模板文件
-        List<String> templates = getTemplate(dbType);
+        String bgFileType = config.getString("bgFileType",Constant.BG_FILE_TYPE_JSP);
+        List<String> templates = getTemplate(dbType,bgFileType);
         for(String template : templates){
             //渲染模板
             StringWriter sw = new StringWriter();
@@ -110,7 +112,6 @@ public class GenUtils {
 
             try {
                 //添加到zip
-                String bgFileType = config.getString("bgFileType",Constant.BG_FILE_TYPE_JSP);
                 zip.putNextEntry(new ZipEntry(getFileName(template, table.getClassNameSmall(), table.getClassName(),config.getString("package"),bgFileType )));
                 IOUtils.write(sw.toString(), zip, "UTF-8");
                 IOUtils.closeQuietly(sw);
@@ -177,11 +178,17 @@ public class GenUtils {
      * @param dbType
      * @return
      */
-    private static List<String> getTemplate(String dbType) {
+    private static List<String> getTemplate(String dbType,String bgFileType) {
         List<String> templates = new ArrayList<>();
         templates.add(String.format("templates/vm/%s/domain.java.vm",dbType));
         templates.add(String.format("templates/vm/%s/dao.java.vm",dbType));
         templates.add(String.format("templates/vm/%s/mapper.xml.vm",dbType));
+        templates.add(String.format("templates/vm/%s/service.java.vm",dbType));
+        templates.add(String.format("templates/vm/%s/serviceImpl.java.vm",dbType));
+        templates.add(String.format("templates/vm/%s/controller.java.vm",dbType));
+        if(Constant.BG_FILE_TYPE_JSP.equals(bgFileType)){
+            templates.add(String.format("templates/vm/%s/list.jsp.vm",dbType));
+        }
         return templates;
     }
 
@@ -208,12 +215,28 @@ public class GenUtils {
         if(template.contains("dao.java.vm")){
             return basePath + File.separator + packageName + File.separator +"dao" + File.separator + className + "Mapper.java";
         }
+        //service
+        if(template.contains("service.java.vm")){
+            return basePath + File.separator + packageName + File.separator +"service" + File.separator + className + "Service.java";
+        }
+        //serviceImpl
+        if(template.contains("serviceImpl.java.vm")){
+            return basePath + File.separator + packageName + File.separator +"service" + File.separator+"impl" + File.separator+ className + "ServiceImpl.java";
+        }
+        //controller
+        if(template.contains("controller.java.vm")){
+            return basePath + File.separator + packageName + File.separator +"controller" + File.separator+ className + "Controller.java";
+        }
 
         //以下需要根据框架分类
         if(Constant.BG_FILE_TYPE_JSP.equals(bgFileType)){
             //mapper
             if(template.contains("mapper.xml.vm")){
                 return basePath + File.separator + packageName + File.separator +"mapper" + File.separator + className + "Mapper.xml";
+            }
+            //mapper
+            if(template.contains("list.jsp.vm")){
+                return "WebRoot" + File.separator +"WEB-INFO"+ File.separator+"pages"+ File.separator + classNameSmall + File.separator +"mapper" + File.separator + className + "Mapper.xml";
             }
         }else{
             //mapper

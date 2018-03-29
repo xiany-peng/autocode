@@ -1,7 +1,9 @@
-package ${package}.dao;
+package ${package}.service;
 
-import ${package}.entity.${classNameSmall};
-
+import ${package}.entity.${className};
+#if($sidePagination == "server")
+import ${package}.utils.Page;
+#end
 import java.util.List;
 
 /**
@@ -10,7 +12,7 @@ import java.util.List;
  * @company ${company}
  * @description $!{comment}
  */
-public interface BaseTableMapper {
+public interface ${className}Service {
 
     /**
      * 添加 （返回主键ID）
@@ -56,7 +58,7 @@ public interface BaseTableMapper {
      * @param $pk.attrNameSmall
      * @return
      */
-    ${className} get($pk.attrType $pk.attrNameSmall);
+     ${className} get($pk.attrType $pk.attrNameSmall);
 
     /**
      * 多条件查询
@@ -73,4 +75,15 @@ public interface BaseTableMapper {
      */
     List<${className}> listByFuzzy(${className} ${classNameSmall});
 #end
+
+#if($sidePagination == "server")
+    /**
+     * 多条件模糊查询
+     * @param ${classNameSmall}
+     * @param page
+     * @return
+     */
+    Page listData(${className} ${classNameSmall}, Page page);
+#end
+
 }

@@ -1,0 +1,80 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<%
+    String path = request.getContextPath();
+    String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
+%>
+<!DOCTYPE html>
+<html>
+<%@ include file="include.jsp"%>
+<body class="white-bg">
+<div class="wrapper wrapper-content ">
+		<div class="col-sm-12">
+			<div class="ibox">
+				<div class="ibox-body">
+					<div class="fixed-table-toolbar">
+						<div class="columns pull-left">
+						</div>
+						<div class="columns pull-right">
+							<button class="btn btn-success" onclick="reLoad()">查询</button>
+						</div>
+						<div class="columns pull-right col-md-2 nopadding">
+							<input id="searchName" type="text" class="form-control"
+								placeholder="">
+						</div>
+					</div>
+					<table id="exampleTable" data-mobile-responsive="true">
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+<script>
+    var prefix = "<%=basePath%>/"+${classNameSmall}
+    $(function () {
+        load();
+    });
+
+    function load() {
+	    $('#exampleTable').bootstrapTable(
+					{
+						method : 'post',
+						url : prefix + "/list",
+						iconSize : 'outline',
+						toolbar : '#exampleToolbar',
+						striped : true,
+						dataType : "json",
+						pagination : true,
+						singleSelect : false,
+						pageSize : 10,
+						pageNumber : 1,
+						showColumns : false,
+						sidePagination : "server",
+						queryParams : function(params) {
+							return {
+								limit: params.limit,
+								offset:params.offset
+							};
+						},
+						columns : [
+								{
+									checkbox : true
+								},
+								#foreach($column in $columns)
+								{
+									field : '${column.attrNameSmall}',
+									title : '${column.comment}'
+								},
+								#end
+								{
+									title : '操作',
+									field : 'id',
+									align : 'center',
+									formatter : function(value, row, index) {
+									}
+								} ]
+					});
+}
+</script>
+</body>
+</html>
