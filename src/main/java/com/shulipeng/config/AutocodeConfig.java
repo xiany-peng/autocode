@@ -1,4 +1,4 @@
-package com.shulipeng;
+package com.shulipeng.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -13,13 +13,13 @@ import org.springframework.stereotype.Component;
 public class AutocodeConfig {
 
     //数据库类型
-    private String db;
+    private String dbType;
 
-    public String getDb() {
-        return db;
+    public String getDbType() {
+        return dbType;
     }
 
-    public void setDb(String db) {
-        this.db = db;
+    public void setDbType(String dbType) {
+        this.dbType = dbType;
     }
 }

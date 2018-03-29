@@ -1,0 +1,43 @@
+package ${package}.entity;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+#if($isNeedDate)
+import java.util.Date;
+#end
+#if($isNeedBigDecimal)
+import java.math.BigDecimal;
+#end
+
+
+/**
+ * @author ${author}
+ * @date ${datetime}
+ * @company ${company}
+ * @description $!{comment}
+ */
+public class ${className} {
+
+#foreach($column in $columns)
+    //$column.comment
+    private $column.attrType $column.attrNameSmall;
+
+#end
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
+#foreach($column in $columns)
+    public $column.attrType get${column.attrName}(){
+        return ${column.attrNameSmall};
+    }
+
+    public $column.attrType set${column.attrName}($column.attrType ${column.attrNameSmall}){
+        this.${column.attrNameSmall} = ${column.attrNameSmall};
+    }
+
+#end
+
+}

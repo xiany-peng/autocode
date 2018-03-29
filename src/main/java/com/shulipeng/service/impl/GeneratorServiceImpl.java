@@ -1,6 +1,7 @@
 package com.shulipeng.service.impl;
 
-import com.shulipeng.AutocodeConfig;
+import com.shulipeng.config.AutocodeConfig;
+import com.shulipeng.config.Constant;
 import com.shulipeng.dao.BaseTableMapper;
 import com.shulipeng.dao.MysqlTableMapper;
 import com.shulipeng.dao.OracleTableMapper;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -37,9 +37,9 @@ public class GeneratorServiceImpl implements GeneratorService{
 
     @PostConstruct
     public void setTableMapper(){
-        if("MYSQL".equals(autocodeConfig.getDb())){
+        if(Constant.DB_TYPE_MYSQL.equals(autocodeConfig.getDbType())){
             this.tableMapper = mysqlTableMapper;
-        }else if("ORACLE".equals(autocodeConfig.getDb())){
+        }else if(Constant.DB_TYPE_ORACLE.equals(autocodeConfig.getDbType())){
             this.tableMapper = oracleTableMapper;
         }
     }
@@ -54,12 +54,14 @@ public class GeneratorServiceImpl implements GeneratorService{
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(outputStream);
         for(String tableName : tableNames){
+
             //查询表信息
             Table table = tableMapper.get(tableName);
             //查询列信息
             List<Column> columns = tableMapper.listColumns(tableName);
+
             //生成代码
-            GenUtils.generatorCode(table, columns, zip);
+            GenUtils.generatorCode(table, columns,autocodeConfig.getDbType(), zip);
         }
         IOUtils.closeQuietly(zip);
         return outputStream.toByteArray();

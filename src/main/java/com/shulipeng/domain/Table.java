@@ -19,15 +19,15 @@ public class Table {
     private String comment;
     //主键
     private Column pk;
-    //除主键外其他列
+    //所有列
     private List<Column> columns;
     //创建时间
     private Date createTime;
 
     //类名
     private String className;
-    //类名 首字母是大写的
-    private String classNameBig;
+    //类名 首字母是小写的
+    private String classNameSmall;
 
     @Override
     public String toString() {
@@ -82,11 +82,11 @@ public class Table {
         this.className = className;
     }
 
-    public String getClassNameBig() {
-        return classNameBig;
+    public String getClassNameSmall() {
+        return classNameSmall;
     }
 
-    public void setClassNameBig(String classNameBig) {
-        this.classNameBig = classNameBig;
+    public void setClassNameSmall(String classNameSmall) {
+        this.classNameSmall = classNameSmall;
     }
 }

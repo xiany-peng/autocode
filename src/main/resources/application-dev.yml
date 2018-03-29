@@ -1,5 +1,5 @@
 autocode:
-  db : MYSQL
+  dbType : mysql
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

@@ -1,14 +1,25 @@
 package com.shulipeng.utils;
 
+import com.shulipeng.config.Constant;
 import com.shulipeng.domain.Column;
 import com.shulipeng.domain.Table;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.joda.time.DateTime;
 
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.List;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.*;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -18,23 +29,96 @@ import java.util.zip.ZipOutputStream;
  */
 public class GenUtils {
 
+    public static final String CONFIG_LOCATION = "generator.properties";
+
     /**
      * 生成代码
      * @param table
      * @param columns
+     * @param dbType
      * @param zip
      */
-    public static void generatorCode(Table table, List<Column> columns, ZipOutputStream zip) {
+    public static void generatorCode(Table table, List<Column> columns,String dbType, ZipOutputStream zip) {
 
         //1.获取配置信息
-        Configuration conf = getConfig();
+        Configuration config = getConfig();
         //2.表和列类属性填充
-        fillTableClassAttr(table,conf.getString("needRemovePre"));
+        fillTableClassAttr(table,config.getString("needRemovePre"));
 
-        //2.加载模板
-        //3.创建 velocity 实例
-        //4.给实例添加context
-        //5.完成
+        boolean isNeedDate = false;//是否需要导入日期
+        boolean isNeedBigDecimal = false;
+        boolean isLogicDelete = false;//是否软删除
+        Iterator<Column> iter = columns.iterator();
+        while (iter.hasNext()){
+            Column column = iter.next();
+            fillColumnClassAttr(column,config);
+            if("PRI".equals(column.getColumnKey()) && table.getPk() == null){
+                table.setPk(column);
+            }
+
+            //判断是否有日期类型的行，
+            if("Date".equals(column.getAttrType())){
+                isNeedDate = true;
+            }
+            if("BigDecimal".equals(column.getAttrType())){
+                isNeedBigDecimal = true;
+            }
+            if("is_delete".equalsIgnoreCase(column.getColumnName())){
+                isLogicDelete = true;
+            }
+
+        }
+        //如果没有主键，则设第一个为主键
+        if(table.getPk() == null){
+            table.setPk(columns.get(0));
+        }
+        table.setColumns(columns);
+
+        //3.设置velocity资源加载器
+        Properties prop = new Properties();
+        prop.put("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        Velocity.init(prop);
+
+        //4.封装模板需要的数据信息
+        Map<String, Object> map = new HashMap<>(16);
+        map.put("tableName", table.getTableName());
+        map.put("comment", table.getComment());
+        map.put("pk", table.getPk());
+        map.put("className", table.getClassName());
+        map.put("classNameSmall", table.getClassNameSmall());
+        //map.put("pathName", conf.getString("package").substring(config.getString("package").lastIndexOf(".") + 1));
+        map.put("columns", table.getColumns());
+        map.put("package", config.getString("package"));
+        map.put("author", config.getString("author"));
+        map.put("company", config.getString("company"));
+        map.put("email", config.getString("email"));
+        map.put("datetime", new DateTime().toString("yyyy/MM/dd HH:mm:ss"));
+        map.put("isNeedDate", isNeedDate);
+        map.put("isNeedBigDecimal", isNeedBigDecimal);
+        map.put("isLogicDelete", isLogicDelete);//是否含有软删标志
+        map.put("batchRemove", config.getBoolean("batchRemove",true));//是否含有软删标志
+        map.put("fuzzyLookup", config.getBoolean("fuzzyLookup",false));//是否需要模糊查询
+        VelocityContext context = new VelocityContext(map);
+
+        //4.获取模板文件
+        List<String> templates = getTemplate(dbType);
+        for(String template : templates){
+            //渲染模板
+            StringWriter sw = new StringWriter();
+            Template tpl = Velocity.getTemplate(template,"UTF-8");
+            tpl.merge(context,sw);
+
+            try {
+                //添加到zip
+                String bgFileType = config.getString("bgFileType",Constant.BG_FILE_TYPE_JSP);
+                zip.putNextEntry(new ZipEntry(getFileName(template, table.getClassNameSmall(), table.getClassName(),config.getString("package"),bgFileType )));
+                IOUtils.write(sw.toString(), zip, "UTF-8");
+                IOUtils.closeQuietly(sw);
+                zip.closeEntry();
+            } catch (IOException e) {
+                throw new RuntimeException("渲染模板失败，表名：" + table.getTableName(), e);
+            }
+        }
     }
 
     /**
@@ -57,11 +141,89 @@ public class GenUtils {
     private static void fillTableClassAttr(Table table, String needRemovePre) {
         String className = table.getTableName();
         if(StringUtils.isNoneBlank(needRemovePre) && className.substring(0,needRemovePre.length()).equals(needRemovePre)){
-            className = className.substring(0,needRemovePre.length());
+            className = className.substring(needRemovePre.length()-1,className.length());
         }
 
-        String className =
+        className = toJavaStyle(className);
+        table.setClassName(className);
+        table.setClassNameSmall(StringUtils.uncapitalize(className));
     }
 
-    public static String toJava(String )
+    /**
+     * 给列类添加属性
+     * @param column
+     * @param conf
+     */
+    private static void fillColumnClassAttr(Column column, Configuration conf) {
+        column.setAttrType(conf.getString(column.getDataType(),"unknowType"));
+
+        String columnName = toJavaStyle(column.getColumnName());
+        column.setAttrName(columnName);
+        column.setAttrNameSmall(StringUtils.uncapitalize(columnName));
+
+    }
+
+    /**
+     * 将字符串转换为java格式 eg class_name to ClassName
+     * @param str
+     * @return
+     */
+    public static String toJavaStyle(String str){
+        return WordUtils.capitalizeFully(str,new char[]{'_'}).replace("_","");
+    }
+
+    /**
+     * 根据数据库类型获取模板数据
+     * @param dbType
+     * @return
+     */
+    private static List<String> getTemplate(String dbType) {
+        List<String> templates = new ArrayList<>();
+        templates.add(String.format("templates/vm/%s/domain.java.vm",dbType));
+        templates.add(String.format("templates/vm/%s/dao.java.vm",dbType));
+        templates.add(String.format("templates/vm/%s/mapper.xml.vm",dbType));
+        return templates;
+    }
+
+    /**
+     * 获取要生成的文件名
+     * @param template
+     * @param classNameSmall
+     * @param className
+     * @param packageName
+     * @return
+     */
+    private static String getFileName(String template, String classNameSmall, String className, String packageName,String bgFileType) {
+        //将包路径改为真实的文件路径
+        if(StringUtils.isNotBlank(packageName)){
+            packageName = packageName.replace(".",File.separator);
+        }
+        //设置文件位置
+        String basePath = "src" ;
+        //domain
+        if(template.contains("domain.java.vm")){
+            return basePath + File.separator + packageName + File.separator +"entity" + File.separator + className + ".java";
+        }
+        //dao
+        if(template.contains("dao.java.vm")){
+            return basePath + File.separator + packageName + File.separator +"dao" + File.separator + className + "Mapper.java";
+        }
+
+        //以下需要根据框架分类
+        if(Constant.BG_FILE_TYPE_JSP.equals(bgFileType)){
+            //mapper
+            if(template.contains("mapper.xml.vm")){
+                return basePath + File.separator + packageName + File.separator +"mapper" + File.separator + className + "Mapper.xml";
+            }
+        }else{
+            //mapper
+            if(template.contains("mapper.xml.vm")){
+                return basePath + File.separator + "main" + File.separator + packageName + File.separator +"mapper" + File.separator + className + "Mapper.xml";
+            }
+        }
+
+        return "";
+    }
+
+
 }
