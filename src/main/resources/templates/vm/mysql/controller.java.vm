@@ -1,12 +1,14 @@
-package ${package}.controller;
+package ${package}.controller.${module};
 
-import com.shulipeng.utils.R;
-import com.shulipeng.utils.Page;
-import org.apache.commons.lang3.StringUtils;
+import java.util.Date;
+
+import ${package}.common.R;
+import ${package}.common.Page;
 
 import org.springframework.ui.Model;
-import ${package}.entity.${className};
-import ${package}.service.${className}Service;
+import ${package}.entity.user.User;
+import ${package}.entity.${module}.${className};
+import ${package}.service.${module}.${className}Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +24,9 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/${classNameSmall}")
-public class GeneratorController {
+public class ${className}Controller {
 
-    private static final String prefix = "/${classNameSmall}";
+    private static final String prefix = "/${module}";
 
     @Autowired
     ${className}Service ${classNameSmall}Service;
@@ -33,9 +35,9 @@ public class GeneratorController {
      * 进入页面
      * @return
      */
-    @GetMapping("")
+    @RequestMapping(value = "", method={ RequestMethod.GET})
     String to${className}Page(){
-        return prefix + "/list";
+        return prefix + "/${classNameSmall}List";
     }
 
 #if($sidePagination == "server")
@@ -50,8 +52,8 @@ public class GeneratorController {
     @ResponseBody
     public Page list(${className} ${classNameSmall},String offset,String limit) {
         Page page = new Page();
-        page.setPageNumber((Integer.valueOf(offset) / (Integer.valueOf(pageSize))));
-        page.setPageSize(Integer.valueOf(pageSize));
+        page.setPageNumber((Integer.valueOf(offset) / (Integer.valueOf(limit))));
+        page.setPageSize(Integer.valueOf(limit));
         page = ${classNameSmall}Service.list(${classNameSmall}, page);
         return page;
     }
@@ -71,6 +73,20 @@ public class GeneratorController {
 #end
     }
 #end
+    /**
+     * 进入查看页面
+     * @param model
+     * @param $pk.attrNameSmall
+     * @return
+     */
+    @RequestMapping(value = "/view", method={ RequestMethod.GET})
+    String view(Model model,$pk.attrType $pk.attrNameSmall){
+        ${className} $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
+    }
+        model.addAttribute("$classNameSmall", $classNameSmall);
+        model.addAttribute("isReadonly", 1);
+        return prefix + "/${classNameSmall}Edit";
+    }
 
     /**
      * 进入编辑页面
@@ -78,19 +94,18 @@ public class GeneratorController {
      * @param $pk.attrNameSmall
      * @return
      */
-    @GetMapping("/edit")
-    String add(Model model,$pk.attrType $pk.attrNameSmall){
+    @RequestMapping(value = "/edit", method={ RequestMethod.GET})
+    String edit(Model model,$pk.attrType $pk.attrNameSmall){
         ${className} $classNameSmall = null;
-#if($pk.attrType == 'Long' || $pk.attrType == "Integer")
+#if($pk.attrType == "Long" || $pk.attrType == "Integer")
         if($pk.attrNameSmall != null){
 #else
         if(StringUtils.isNotBlank($pk.attrNameSmall)){
 #end
-        $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
+            $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
         }
         model.addAttribute("$classNameSmall", $classNameSmall);
-
-        return prefix + "/edit";
+        return prefix + "/${classNameSmall}Edit";
     }
 
     /**
@@ -99,12 +114,27 @@ public class GeneratorController {
      * @return
      */
     @ResponseBody
-    @PostMapping("/save")
-    public R save( ${className} ${classNameSmall}){
-    if(${classNameSmall}Service.save(${classNameSmall})>0){
-        return R.ok();
-    }
-    return R.error();
+    @RequestMapping(value = "/save", method={ RequestMethod.POST})
+    public R save( ${className} ${classNameSmall},HttpServletRequest request){
+        User user = (User)request.getSession().getAttribute("currentUser");
+        ${classNameSmall}.setUpdateBy(user.getWorkcode());
+        ${classNameSmall}.setUpdateTime(new Date());
+#if($pk.attrType == "Long" || $pk.attrType == "Integer")
+        if(${classNameSmall}.get${pk.attrName}() != null){
+#else
+        if(StringUtils.isNotBlank(${classNameSmall}.get${pk.attrName}())){
+#end
+            if(${classNameSmall}Service.update(${classNameSmall})>0){
+                return R.ok();
+            }
+         }else{
+            ${classNameSmall}.setCreateBy(user.getWorkcode());
+            ${classNameSmall}.setCreateTime(new Date());
+            if (${classNameSmall}Service.insert(${classNameSmall}) > 0) {
+                return R.ok();
+            }
+        }
+        return R.error();
 	}
 
     /**
@@ -113,9 +143,13 @@ public class GeneratorController {
      * @return
      */
     @ResponseBody
-    @PostMapping("/save")
-    public R save( $pk.attrType $pk.attrNameSmall){
-        if(${classNameSmall}Service.delete(${classNameSmall})>0){
+    @RequestMapping(value = "/delete", method={ RequestMethod.POST})
+    public R delete( $pk.attrType $pk.attrNameSmall){
+#if($isLogicDelete)
+        if(${classNameSmall}Service.deleteLogic($pk.attrNameSmall)>0){
+#else
+        if(${classNameSmall}Service.delete($pk.attrNameSmall)>0){
+#end
             return R.ok();
         }
         return R.error();

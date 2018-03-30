@@ -1,6 +1,6 @@
-package ${package}.service;
+package ${package}.service.${module};
 
-import ${package}.entity.${className};
+import ${package}.entity.${module}.${className};
 #if($sidePagination == "server")
 import ${package}.utils.Page;
 #end
@@ -51,7 +51,7 @@ public interface ${className}Service {
      * @param ${classNameSmall}
      * @return
      */
-    int update($pk.attrType $pk.attrNameSmall);
+    int update(${className} ${classNameSmall});
 
     /**
      * 通过主键查询
@@ -83,7 +83,7 @@ public interface ${className}Service {
      * @param page
      * @return
      */
-    Page listData(${className} ${classNameSmall}, Page page);
+    Page list(${className} ${classNameSmall}, Page page);
 #end
 
 }

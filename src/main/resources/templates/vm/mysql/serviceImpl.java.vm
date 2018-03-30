@@ -1,13 +1,14 @@
-package ${package}.service.impl;
+package ${package}.service.${module}.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import ${package}.entity.${className};
+import ${package}.service.${module}.${className}Service;
+import ${package}.entity.${module}.${className};
 import java.util.List;
 #if($sidePagination == "server")
-import ${package}.utils.Page;
+import ${package}.common.Page;
 #end
+import ${package}.dao.${module}.${className}Mapper};
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -24,54 +25,54 @@ public class ${className}ServiceImpl implements ${className}Service {
     private ${className}Mapper ${classNameSmall}Mapper;
 
     @Override
-    int insert(${className} ${classNameSmall}){
+    public int insert(${className} ${classNameSmall}){
         return ${classNameSmall}Mapper.insert(${classNameSmall});
     }
 
 #if($isLogicDelete)
     @Override
-    int deleteLogic($pk.attrType $pk.attrNameSmall){
+    public int deleteLogic($pk.attrType $pk.attrNameSmall){
         return ${classNameSmall}Mapper.deleteLogic($pk.attrNameSmall);
     }
 #else
     @Override
-    int delete($pk.attrType $pk.attrNameSmall){
+    public int delete($pk.attrType $pk.attrNameSmall){
         return ${classNameSmall}Mapper.delete($pk.attrNameSmall);
     }
 #end
 
 #if($batchRemove)
     @Override
-    int batchDelete(${pk.attrType}[] ${pk.attrNameSmall}s){
+    public int batchDelete(${pk.attrType}[] ${pk.attrNameSmall}s){
         return ${classNameSmall}Mapper.batchDelete(${pk.attrNameSmall}s);
     }
 #end
 
     @Override
-    int update($pk.attrType $pk.attrNameSmall){
-        return ${classNameSmall}Mapper.update($pk.attrNameSmall);
+    public int update(${className} ${classNameSmall}){
+        return ${classNameSmall}Mapper.update(${classNameSmall});
     }
 
     @Override
-    ${className} get($pk.attrType $pk.attrNameSmall){
+    public ${className} get($pk.attrType $pk.attrNameSmall){
         return ${classNameSmall}Mapper.get($pk.attrNameSmall);
     }
 
     @Override
-    List<${className}> list(${className} ${classNameSmall}){
+    public List<${className}> list(${className} ${classNameSmall}){
         return ${classNameSmall}Mapper.list(${classNameSmall});
     }
 
 #if($fuzzyLookup)
     @Override
-    List<${className}> listByFuzzy(${className} ${classNameSmall}){
+    public List<${className}> listByFuzzy(${className} ${classNameSmall}){
         return ${classNameSmall}Mapper.listByFuzzy(${classNameSmall});
     }
 #end
 
 #if($sidePagination == "server")
     @Override
-    Page listData(${className} ${classNameSmall}, Page page){
+    public Page list(${className} ${classNameSmall}, Page page){
         PageHelper.startPage(page.getPageNumber(), page.getPageSize());
 #if($fuzzyLookup)
         List<${className}> list = this.listByFuzzy(${classNameSmall});

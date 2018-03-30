@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="${package}.dao.${className}Mapper}">
+<mapper namespace="${package}.dao.${module}.${className}Mapper">
 
     <!-- 增加 -->
-    <select id="insert" parameterType="${package}.entity.${className}" #if($pk.extra == 'auto_increment') useGeneratedKeys="true" keyProperty="$pk.attrNameSmall"#end >
+    <insert id="insert" parameterType="${package}.entity.${module}.${className}" #if($pk.extra == 'auto_increment') useGeneratedKeys="true" keyProperty="$pk.attrNameSmall"#end >
         insert into ${tableName}
         (
 #foreach($column in $columns)
@@ -23,7 +23,7 @@
 #end
 #end
         )
-    </select>
+    </insert>
 
 #if($isLogicDelete)
     <!-- 逻辑删除 -->
@@ -55,7 +55,7 @@
 #end
 
     <!-- 修改 -->
-    <update id="update" parameterType="${package}.entity.${className}">
+    <update id="update" parameterType="${package}.entity.${module}.${className}">
         update ${tableName}
         <set>
 #foreach($column in $columns)
@@ -68,18 +68,21 @@
     </update>
 
     <!-- 通过主键ID查询 -->
-    <select id="get" resultType="${package}.entity.${className}">
+    <select id="get" resultType="${package}.entity.${module}.${className}">
         select
 #foreach($column in $columns)
+#if($column.attrType == "Date")
+        date_format(t.`${column.columnName}`,'%Y-%m-%d %H:%i:%s') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
+#else
         t.`${column.columnName}` $column.attrNameSmall #if($velocityCount != $columns.size()),#end
-
+#end
 #end
         from ${tableName} t
         where t.${pk.columnName} = #{$pk.attrNameSmall}
     </select>
 
     <!-- 多条件查询 -->
-    <select id="list" resultType="${package}.entity.${className}">
+    <select id="list" resultType="${package}.entity.${module}.${className}">
         select
 #foreach($column in $columns)
             t.`${column.columnName}` $column.attrNameSmall#if($velocityCount != $columns.size()),#end
@@ -97,7 +100,7 @@
 
 #if($fuzzyLookup)
     <!-- 多条件模糊查询 -->
-    <select id="listByFuzzy" resultType="${package}.entity.${className}">
+    <select id="listByFuzzy" resultType="${package}.entity.${module}.${className}">
         select
 #foreach($column in $columns)
             t.`${column.columnName}` $column.attrNameSmall#if($velocityCount != $columns.size()),#end

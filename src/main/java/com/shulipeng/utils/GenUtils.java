@@ -80,6 +80,7 @@ public class GenUtils {
         Velocity.init(prop);
 
         //4.封装模板需要的数据信息
+        String module = config.getString("module",table.getClassNameSmall().toLowerCase());
         Map<String, Object> map = new HashMap<>(16);
         map.put("tableName", table.getTableName());
         map.put("comment", table.getComment());
@@ -99,6 +100,7 @@ public class GenUtils {
         map.put("batchRemove", config.getBoolean("batchRemove",true));//是否含有软删标志
         map.put("fuzzyLookup", config.getBoolean("fuzzyLookup",false));//是否需要模糊查询
         map.put("sidePagination", config.getString("sidePagination","server"));//分页方式，
+        map.put("module", module);//分页方式，
         VelocityContext context = new VelocityContext(map);
 
         //4.获取模板文件
@@ -112,7 +114,7 @@ public class GenUtils {
 
             try {
                 //添加到zip
-                zip.putNextEntry(new ZipEntry(getFileName(template, table.getClassNameSmall(), table.getClassName(),config.getString("package"),bgFileType )));
+                zip.putNextEntry(new ZipEntry(getFileName(template, table.getClassNameSmall(), table.getClassName(),config.getString("package"),module,bgFileType )));
                 IOUtils.write(sw.toString(), zip, "UTF-8");
                 IOUtils.closeQuietly(sw);
                 zip.closeEntry();
@@ -188,6 +190,7 @@ public class GenUtils {
         templates.add(String.format("templates/vm/%s/controller.java.vm",dbType));
         if(Constant.BG_FILE_TYPE_JSP.equals(bgFileType)){
             templates.add(String.format("templates/vm/%s/list.jsp.vm",dbType));
+            templates.add(String.format("templates/vm/%s/edit.jsp.vm",dbType));
         }
         return templates;
     }
@@ -197,51 +200,55 @@ public class GenUtils {
      * @param template
      * @param classNameSmall
      * @param className
-     * @param packageName
+     * @param module
+     * @param bgFileType
      * @return
      */
-    private static String getFileName(String template, String classNameSmall, String className, String packageName,String bgFileType) {
+    private static String getFileName(String template, String classNameSmall, String className, String packageName,String module,String bgFileType) {
         //将包路径改为真实的文件路径
         if(StringUtils.isNotBlank(packageName)){
             packageName = packageName.replace(".",File.separator);
         }
         //设置文件位置
-        String basePath = "src" ;
+        String basePath = "src" + File.separator + packageName + File.separator ;
         //domain
         if(template.contains("domain.java.vm")){
-            return basePath + File.separator + packageName + File.separator +"entity" + File.separator + className + ".java";
+            return basePath  +"entity" + File.separator + module + File.separator  + className + ".java";
         }
         //dao
         if(template.contains("dao.java.vm")){
-            return basePath + File.separator + packageName + File.separator +"dao" + File.separator + className + "Mapper.java";
+            return basePath +"dao" + File.separator + module + File.separator + className + "Mapper.java";
         }
         //service
         if(template.contains("service.java.vm")){
-            return basePath + File.separator + packageName + File.separator +"service" + File.separator + className + "Service.java";
+            return basePath +"service" + File.separator + module + File.separator + className + "Service.java";
         }
         //serviceImpl
         if(template.contains("serviceImpl.java.vm")){
-            return basePath + File.separator + packageName + File.separator +"service" + File.separator+"impl" + File.separator+ className + "ServiceImpl.java";
+            return basePath +"service" + File.separator + module + File.separator + "impl" + File.separator+ className + "ServiceImpl.java";
         }
         //controller
         if(template.contains("controller.java.vm")){
-            return basePath + File.separator + packageName + File.separator +"controller" + File.separator+ className + "Controller.java";
+            return basePath +"controller" + File.separator + module + File.separator  + File.separator+ className + "Controller.java";
         }
 
         //以下需要根据框架分类
         if(Constant.BG_FILE_TYPE_JSP.equals(bgFileType)){
             //mapper
             if(template.contains("mapper.xml.vm")){
-                return basePath + File.separator + packageName + File.separator +"mapper" + File.separator + className + "Mapper.xml";
+                return basePath +"mapper" + File.separator + module + File.separator + className + "Mapper.xml";
             }
-            //mapper
+            //list page
             if(template.contains("list.jsp.vm")){
-                return "WebRoot" + File.separator +"WEB-INFO"+ File.separator+"pages"+ File.separator + classNameSmall + File.separator +"mapper" + File.separator + className + "Mapper.xml";
+                return "WebRoot" + File.separator +"WEB-INF"+ File.separator+"pages"+ File.separator + module + File.separator  +  classNameSmall + "List.jsp";
+            }//edit page
+            if(template.contains("edit.jsp.vm")){
+                return "WebRoot" + File.separator +"WEB-INF"+ File.separator+"pages"+ File.separator + module + File.separator  +  classNameSmall + "Edit.jsp";
             }
         }else{
             //mapper
             if(template.contains("mapper.xml.vm")){
-                return basePath + File.separator + "main" + File.separator + packageName + File.separator +"mapper" + File.separator + className + "Mapper.xml";
+                return basePath + File.separator + "main" + File.separator + packageName + File.separator +"mapper" + File.separator + classNameSmall + "Mapper.xml";
             }
         }
 

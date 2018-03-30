@@ -1,4 +1,4 @@
-package ${package}.entity;
+package ${package}.entity.${module};
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -34,7 +34,7 @@ public class ${className} {
         return ${column.attrNameSmall};
     }
 
-    public $column.attrType set${column.attrName}($column.attrType ${column.attrNameSmall}){
+    public void set${column.attrName}($column.attrType ${column.attrNameSmall}){
         this.${column.attrNameSmall} = ${column.attrNameSmall};
     }
 
