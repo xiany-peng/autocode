@@ -9,20 +9,20 @@
 				<div class="ibox float-e-margins">
 					<div class="ibox-content">
 						<form class="form-horizontal m-t" id="exampleForm">
-						    <input id="${pk.attrNameSmall}" name="${pk.attrNameSmall}" value="${${className}.${pk.attrNameSmall}}"  type="hidden">
+						    <input id="${pk.attrNameSmall}" name="${pk.attrNameSmall}" value="${${classNameSmall}.${pk.attrNameSmall}}"  type="hidden">
 #foreach($column in $columns)
 #if($column.columnName != $pk.columnName)
                             <div class="form-group">
 								<label class="col-sm-3 control-label">${column.comment}：</label>
 								<div class="col-sm-8">
-									<input id="${column.attrNameSmall}" name="${column.attrNameSmall}" value="${${className}.${column.attrNameSmall}}" class="form-control" type="text">
+									<input id="${column.attrNameSmall}" name="${column.attrNameSmall}" value="${${classNameSmall}.${column.attrNameSmall}}" class="form-control" type="text">
 								</div>
 							</div>
 #end
 #end
 							<div class="form-group">
-								<div class="col-sm-8 col-sm-offset-3">
-									<button onclick="save()" type="button" class="btn btn-primary">提交</button>
+								<div class="text-center">
+									<button id="btn_save" onclick="save()" type="button" class="btn btn-primary">提交</button>
 								</div>
 							</div>
 						</form>
@@ -45,6 +45,7 @@
         //禁用所有输入框
         function readonlyInput(){
             $("#exampleForm").find("input,textarea,checkbox,radio").attr("readonly",true);
+            $("#btn_save").hide();//隐藏操作按钮
         }
 
         //保存
@@ -57,7 +58,7 @@
             $.ajax({
                 cache : true,
                 type : "POST",
-                url : prefix + "/save",
+                url : prefix + "/save.do",
                 data : $('#exampleForm').serialize(),
                 async : false,
                 error : function(request) {
@@ -66,7 +67,7 @@
                 success : function(data) {
                     if (data.code == 0) {
                         parent.layer.msg("操作成功");
-                        parent.reLoad();
+                        parent.reload();
                         var index = parent.layer.getFrameIndex(window.name); // 获取窗口索引
                         parent.layer.close(index);
                     } else {

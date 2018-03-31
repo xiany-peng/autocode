@@ -9,7 +9,7 @@
         (
 #foreach($column in $columns)
 #if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
-         `$column.attrNameSmall`#if($velocityCount != $columns.size()),#end
+         `$column.columnName`#if($velocityCount != $columns.size()),#end
 
 #end
 #end
@@ -18,7 +18,11 @@
         (
 #foreach($column in $columns)
 #if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
-         #{$column.attrNameSmall}#if($velocityCount != $columns.size()),#end
+#if($column.columnName == 'create_time' || $column.columnName == 'create_date' || $column.columnName == 'update_time' || $column.columnName == 'update_date')
+        now()#if($velocityCount != $columns.size()),#end
+#else
+        #{$column.attrNameSmall}#if($velocityCount != $columns.size()),#end
+#end
 
 #end
 #end
@@ -60,7 +64,11 @@
         <set>
 #foreach($column in $columns)
 #if($column.columnName != $pk.columnName)
+#if($column.columnName == 'update_time' || $column.columnName == 'update_date')
+    $column.columnName` = now(),
+#else
         <if test="$column.attrNameSmall != null">`$column.columnName` = #{$column.attrNameSmall},</if>
+#end
 #end
 #end
         </set>
@@ -76,6 +84,7 @@
 #else
         t.`${column.columnName}` $column.attrNameSmall #if($velocityCount != $columns.size()),#end
 #end
+
 #end
         from ${tableName} t
         where t.${pk.columnName} = #{$pk.attrNameSmall}
@@ -85,7 +94,11 @@
     <select id="list" resultType="${package}.entity.${module}.${className}">
         select
 #foreach($column in $columns)
-            t.`${column.columnName}` $column.attrNameSmall#if($velocityCount != $columns.size()),#end
+#if($column.attrType == "Date")
+        date_format(t.`${column.columnName}`,'%Y-%m-%d %H:%i:%s') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
+#else
+        t.`${column.columnName}` $column.attrNameSmall #if($velocityCount != $columns.size()),#end
+#end
 
 #end
         from ${tableName} t
@@ -103,7 +116,11 @@
     <select id="listByFuzzy" resultType="${package}.entity.${module}.${className}">
         select
 #foreach($column in $columns)
-            t.`${column.columnName}` $column.attrNameSmall#if($velocityCount != $columns.size()),#end
+    #if($column.attrType == "Date")
+        date_format(t.`${column.columnName}`,'%Y-%m-%d %H:%i:%s') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
+    #else
+        t.`${column.columnName}` $column.attrNameSmall #if($velocityCount != $columns.size()),#end
+    #end
 
 #end
         from ${tableName} t

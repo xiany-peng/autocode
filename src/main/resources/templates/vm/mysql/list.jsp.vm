@@ -22,11 +22,11 @@
 	                        <button type="button" onclick="edit()" class="btn btn-outline btn-success btn-edit" data-toggle="tooltip" title="修改">
 	                            <i class="fa fa-edit" aria-hidden="true"></i>
 	                        </button>
-	                        <button type="button" onclick="delete()"
+	                        <button type="button" onclick="remove()"
 	                                class="btn btn-outline btn-success btn-delete" data-toggle="tooltip" title="删除">
 	                            <i class="fa fa-trash" aria-hidden="true"></i>
 	                        </button>
-	                        <button type="button" onclick="reLoad()" class="btn btn-outline btn-success btn-refresh" data-toggle="tooltip" title="刷新">
+	                        <button type="button" onclick="reload()" class="btn btn-outline btn-success btn-refresh" data-toggle="tooltip" title="刷新">
 	                            <i class="fa fa-refresh" aria-hidden="true"></i>
 	                        </button>
 	                   </div>
@@ -58,6 +58,7 @@
 						dataType : "json",
 						pagination : true,
 						singleSelect : true,
+						clickToSelect : true,
 						pageSize : 10,
 						pageNumber : 1,
 						showColumns : false,
@@ -71,7 +72,7 @@
 						},
 						columns : [
 								{
-									checkbox : true
+									radio : true
 								},
 #foreach($column in $columns)
 								{
@@ -86,8 +87,8 @@
 									formatter : function(value, row, index) {
 									}
 								} ]
-					});
-
+					})
+    }
 	function reload(){
 		$("#exampleTable").bootstrapTable('refresh');
 	}
@@ -149,7 +150,7 @@
 			btn : [ '确定', '取消' ]
 		}, function() {
 			$.ajax({
-				url : prefix+"/remove",
+				url : prefix+"/delete.do",
 				type : "post",
 				data : {
 					'${pk.attrNameSmall}' : id
@@ -157,7 +158,7 @@
 				success : function(r) {
 					if (r.code==0) {
 						layer.msg(r.msg);
-						reLoad();
+						reload();
 					}else{
 						layer.msg(r.msg);
 					}
@@ -165,7 +166,7 @@
 			});
 		})
 	}
-}
+
 </script>
 </body>
 </html>

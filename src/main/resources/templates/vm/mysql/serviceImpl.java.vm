@@ -8,7 +8,7 @@ import java.util.List;
 #if($sidePagination == "server")
 import ${package}.common.Page;
 #end
-import ${package}.dao.${module}.${className}Mapper};
+import ${package}.dao.${module}.${className}Mapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 

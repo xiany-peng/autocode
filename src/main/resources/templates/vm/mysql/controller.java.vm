@@ -82,7 +82,6 @@ public class ${className}Controller {
     @RequestMapping(value = "/view", method={ RequestMethod.GET})
     String view(Model model,$pk.attrType $pk.attrNameSmall){
         ${className} $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
-    }
         model.addAttribute("$classNameSmall", $classNameSmall);
         model.addAttribute("isReadonly", 1);
         return prefix + "/${classNameSmall}Edit";
@@ -118,7 +117,7 @@ public class ${className}Controller {
     public R save( ${className} ${classNameSmall},HttpServletRequest request){
         User user = (User)request.getSession().getAttribute("currentUser");
         ${classNameSmall}.setUpdateBy(user.getWorkcode());
-        ${classNameSmall}.setUpdateTime(new Date());
+        ##${classNameSmall}.setUpdateTime(new Date());
 #if($pk.attrType == "Long" || $pk.attrType == "Integer")
         if(${classNameSmall}.get${pk.attrName}() != null){
 #else
@@ -128,8 +127,11 @@ public class ${className}Controller {
                 return R.ok();
             }
          }else{
+#if($isLogicDelete)
+            ${classNameSmall}.setIsDelete(0);
+#end
             ${classNameSmall}.setCreateBy(user.getWorkcode());
-            ${classNameSmall}.setCreateTime(new Date());
+            ##${classNameSmall}.setCreateTime(new Date());
             if (${classNameSmall}Service.insert(${classNameSmall}) > 0) {
                 return R.ok();
             }
