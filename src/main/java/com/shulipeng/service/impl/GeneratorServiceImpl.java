@@ -2,6 +2,7 @@ package com.shulipeng.service.impl;
 
 import com.shulipeng.config.AutocodeConfig;
 import com.shulipeng.config.Constant;
+import com.shulipeng.config.DataSourceConfig;
 import com.shulipeng.dao.BaseTableMapper;
 import com.shulipeng.dao.MysqlTableMapper;
 import com.shulipeng.dao.OracleTableMapper;
@@ -29,7 +30,7 @@ public class GeneratorServiceImpl implements GeneratorService{
     private BaseTableMapper tableMapper;
 
     @Autowired
-    AutocodeConfig autocodeConfig;
+    DataSourceConfig dataSourceConfig;
     @Autowired
     OracleTableMapper oracleTableMapper;
     @Autowired
@@ -37,9 +38,9 @@ public class GeneratorServiceImpl implements GeneratorService{
 
     @PostConstruct
     public void setTableMapper(){
-        if(Constant.DB_TYPE_MYSQL.equals(autocodeConfig.getDbType())){
+        if(Constant.DB_TYPE_MYSQL.equals(dataSourceConfig.dbType)){
             this.tableMapper = mysqlTableMapper;
-        }else if(Constant.DB_TYPE_ORACLE.equals(autocodeConfig.getDbType())){
+        }else if(Constant.DB_TYPE_ORACLE.equals(dataSourceConfig.dbType)){
             this.tableMapper = oracleTableMapper;
         }
     }
@@ -61,7 +62,7 @@ public class GeneratorServiceImpl implements GeneratorService{
             List<Column> columns = tableMapper.listColumns(tableName);
 
             //生成代码
-            GenUtils.generatorCode(table, columns,autocodeConfig.getDbType(), zip);
+            GenUtils.generatorCode(table, columns,dataSourceConfig.dbType, zip);
         }
         IOUtils.closeQuietly(zip);
         return outputStream.toByteArray();

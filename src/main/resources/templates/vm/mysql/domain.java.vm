@@ -30,11 +30,11 @@ public class ${className} {
     }
 
 #foreach($column in $columns)
-    public $column.attrType get${column.attrName}(){
+    public #if($column.attrType == "Date")String#else$column.attrType#end get${column.attrName}(){
         return ${column.attrNameSmall};
     }
 
-    public void set${column.attrName}($column.attrType ${column.attrNameSmall}){
+    public void set${column.attrName}(#if($column.attrType == "Date")String#else$column.attrType#end ${column.attrNameSmall}){
         this.${column.attrNameSmall} = ${column.attrNameSmall};
     }
 
