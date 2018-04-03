@@ -31,6 +31,11 @@ public class ConfigController {
     @Autowired
     DataSourceConfig dataSourceConfig;
 
+    /**
+     * 进入数据源页面
+     * @param model
+     * @return
+     */
     @GetMapping("/db")
     String toDBPage(Model  model){
         try {
@@ -69,4 +74,31 @@ public class ConfigController {
         }
         return  R.ok();
     }
+
+    /**
+     * 进入生成代码配置的页面
+     * @param model
+     * @return
+     */
+    @GetMapping("/generator")
+    String toGeneratorConfPage(Model  model){
+        try {
+            PropertiesConfiguration conf = new PropertiesConfiguration("generator.properties");
+            Map<String,Object> property = new HashMap<>(16);
+            property.put("package",conf.getString("package"));
+            property.put("module",conf.getString("module"));
+            property.put("author",conf.getString("author"));
+            property.put("company",conf.getString("company"));
+            property.put("needRemovePre",conf.getString("needRemovePre"));
+            property.put("bgFileType",conf.getString("bgFileType"));
+            property.put("sidePagination",conf.getString("sidePagination"));
+            property.put("batchRemove",conf.getString("batchRemove"));
+            property.put("fuzzyLookup",conf.getString("fuzzyLookup"));
+            model.addAttribute("properties",property);
+        } catch (ConfigurationException e) {
+            logger.error("获取数据库配置文件失败："+e);
+        }
+        return  prefix + "/generator";
+    }
+
 }

@@ -67,15 +67,6 @@ public interface ${className}Service {
      */
     List<${className}> list(${className} ${classNameSmall});
 
-#if($fuzzyLookup)
-    /**
-     * 多条件模糊查询
-     * @param ${classNameSmall}
-     * @return
-     */
-    List<${className}> listByFuzzy(${className} ${classNameSmall});
-#end
-
 #if($sidePagination == "server")
     /**
      * 多条件模糊查询
@@ -84,6 +75,15 @@ public interface ${className}Service {
      * @return
      */
     Page list(${className} ${classNameSmall}, Page page);
+#else
+#if($fuzzyLookup)
+    /**
+     * 多条件模糊查询
+     * @param ${classNameSmall}
+     * @return
+     */
+    List<${className}> listByFuzzy(${className} ${classNameSmall});
+#end
 #end
 
 }

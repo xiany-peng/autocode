@@ -61,6 +61,7 @@ public class ${className}Controller {
         page = ${classNameSmall}Service.list(${classNameSmall}, page);
         return page;
     }
+#else
     /**
      * 多条件#if($fuzzyLookup)模糊#end 查询
      * @param ${classNameSmall}
@@ -70,28 +71,47 @@ public class ${className}Controller {
     @ResponseBody
     @RequiresPermissions("${classnameSmall}:list")
     public List<${className}> list(${className} ${classNameSmall}) {
-        #if($fuzzyLookup)
-            return ${classNameSmall}Service.listByFuzzy(${classNameSmall});
-        #else
-            return ${classNameSmall}Service.list(${classNameSmall});
-        #end
-    }
+#if($fuzzyLookup)
+        return ${classNameSmall}Service.listByFuzzy(${classNameSmall});
 #else
+        return ${classNameSmall}Service.list(${classNameSmall});
 #end
+    }
+#end
+
     /**
-     * 进入查看页面
+     * 进入新增页面
      * @param model
      * @param $pk.attrNameSmall
      * @return
      */
-    @RequestMapping(value = "/view", method={ RequestMethod.GET})
-    @RequiresPermissions("${classnameSmall}:list")
-    String view(Model model,$pk.attrType $pk.attrNameSmall){
-        ${className} $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
+    @RequestMapping(value = "/add", method={ RequestMethod.GET})
+    @RequiresPermissions("${classnameSmall}:add")
+    String add(){
+        return prefix + "/${classNameSmall}Add";
     }
-        model.addAttribute("$classNameSmall", $classNameSmall);
-        model.addAttribute("isReadonly", 1);
-        return prefix + "/${classNameSmall}Edit";
+
+    /**
+     * 保存
+     * @param ${classNameSmall}
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/save", method={ RequestMethod.POST})
+    @RequiresPermissions("${classnameSmall}:add")
+    public R save( ${className} ${classNameSmall},HttpServletRequest request){
+        User user = (User)request.getSession().getAttribute("currentUser");
+#foreach($column in $columns)
+#if($column.attrNameSmall == 'createBy')
+        ${classNameSmall}.setCreateBy(user.getWorkcode());
+#elseif($column.attrNameSmall == 'updateBy')
+        ${classNameSmall}.setUpdateBy(user.getWorkcode());
+#end
+#end
+        if(${classNameSmall}Service.insert(${classNameSmall}) > 0) {
+            return R.ok();
+        }
+        return R.error();
     }
 
     /**
@@ -103,45 +123,46 @@ public class ${className}Controller {
     @RequestMapping(value = "/edit", method={ RequestMethod.GET})
     @RequiresPermissions("${classnameSmall}:edit")
     String edit(Model model,$pk.attrType $pk.attrNameSmall){
-        ${className} $classNameSmall = null;
-#if($pk.attrType == "Long" || $pk.attrType == "Integer")
-        if($pk.attrNameSmall != null){
-#else
-        if(StringUtils.isNotBlank($pk.attrNameSmall)){
-#end
-            $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
-        }
+        ${className} $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
         model.addAttribute("$classNameSmall", $classNameSmall);
         return prefix + "/${classNameSmall}Edit";
     }
 
     /**
-     * 保存
+     * 修改
      * @param ${classNameSmall}
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/save", method={ RequestMethod.POST})
-    @RequiresPermissions(value={"${classnameSmall}:add","${classnameSmall}:edit"},logical= Logical.OR)
-    public R save( ${className} ${classNameSmall},HttpServletRequest request){
+    @RequestMapping(value = "/update", method={ RequestMethod.POST})
+    @RequiresPermissions("${classnameSmall}:edit")
+    public R update( ${className} ${classNameSmall},HttpServletRequest request){
         User user = (User)request.getSession().getAttribute("currentUser");
+#foreach($column in $columns)
+#if($column.attrNameSmall == 'updateBy')
         ${classNameSmall}.setUpdateBy(user.getWorkcode());
-#if($pk.attrType == "Long" || $pk.attrType == "Integer")
-        if(${classNameSmall}.get${pk.attrName}() != null){
-#else
-        if(StringUtils.isNotBlank(${classNameSmall}.get${pk.attrName}())){
 #end
-            if(${classNameSmall}Service.update(${classNameSmall})>0){
-                return R.ok();
-            }
-         }else{
-            ${classNameSmall}.setCreateBy(user.getWorkcode());
-            if(${classNameSmall}Service.insert(${classNameSmall}) > 0) {
-                return R.ok();
-            }
+#end
+        if(${classNameSmall}Service.update(${classNameSmall})>0){
+            return R.ok();
         }
         return R.error();
-	}
+    }
+
+    /**
+     * 进入查看页面
+     * @param model
+     * @param $pk.attrNameSmall
+     * @return
+     */
+    @RequestMapping(value = "/view", method={ RequestMethod.GET})
+    @RequiresPermissions("${classnameSmall}:list")
+    String view(Model model,$pk.attrType $pk.attrNameSmall){
+        ${className} $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
+        model.addAttribute("$classNameSmall", $classNameSmall);
+        model.addAttribute("isReadonly", 1);
+        return prefix + "/${classNameSmall}Edit";
+    }
 
     /**
      * 删除

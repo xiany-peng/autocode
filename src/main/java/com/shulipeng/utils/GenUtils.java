@@ -99,7 +99,7 @@ public class GenUtils {
         map.put("isLogicDelete", isLogicDelete);//是否含有软删标志
         map.put("batchRemove", config.getBoolean("batchRemove",true));//是否含有软删标志
         map.put("fuzzyLookup", config.getBoolean("fuzzyLookup",false));//是否需要模糊查询
-        map.put("sidePagination", config.getString("sidePagination","server"));//分页方式，
+        map.put("sidePagination", config.getString("sidePagination","server"));//分页方式
         map.put("module", module);//分页方式，
         VelocityContext context = new VelocityContext(map);
 
@@ -191,6 +191,7 @@ public class GenUtils {
         if(Constant.BG_FILE_TYPE_JSP.equals(bgFileType)){
             templates.add(String.format("templates/vm/%s/list.jsp.vm",dbType));
             templates.add(String.format("templates/vm/%s/edit.jsp.vm",dbType));
+            templates.add(String.format("templates/vm/%s/add.jsp.vm",dbType));
         }
         return templates;
     }
@@ -241,9 +242,14 @@ public class GenUtils {
             //list page
             if(template.contains("list.jsp.vm")){
                 return "WebRoot" + File.separator +"WEB-INF"+ File.separator+"pages"+ File.separator + module + File.separator  +  classNameSmall + "List.jsp";
-            }//edit page
+            }
+            //edit page
             if(template.contains("edit.jsp.vm")){
                 return "WebRoot" + File.separator +"WEB-INF"+ File.separator+"pages"+ File.separator + module + File.separator  +  classNameSmall + "Edit.jsp";
+            }
+            //add page
+            if(template.contains("add.jsp.vm")){
+                return "WebRoot" + File.separator +"WEB-INF"+ File.separator+"pages"+ File.separator + module + File.separator  +  classNameSmall + "Add.jsp";
             }
         }else{
             //mapper
