@@ -3,7 +3,10 @@ package com.shulipeng.controller;
 import com.alibaba.fastjson.JSON;
 import com.shulipeng.domain.Table;
 import com.shulipeng.service.GeneratorService;
+import com.shulipeng.utils.DataSourceUtil;
 import org.apache.commons.io.IOUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -66,7 +69,7 @@ public class GeneratorController {
      */
     @GetMapping("/batchCode")
     void batchCode(HttpServletRequest request, HttpServletResponse response,
-               String tables) throws IOException {
+                   String tables) throws IOException {
         String[] tableNames = new String[] {};
         tableNames = JSON.parseArray(tables).toArray(tableNames);
         byte[] data = generatorService.generatorCode(tableNames);
@@ -75,5 +78,17 @@ public class GeneratorController {
         response.addHeader("Content-Length", "" + data.length);
         response.setContentType("application/octet-stream; charset=UTF-8");
         IOUtils.write(data, response.getOutputStream());
+    }
+
+    /**
+     * 批量生成代码
+     * @param request
+     * @param response
+     * @param tables
+     * @throws IOException
+     */
+    @GetMapping("/changeDataSource")
+    void batchCode(){
+        DataSourceUtil.initSubmitTypeAndConnectionType();
     }
 }

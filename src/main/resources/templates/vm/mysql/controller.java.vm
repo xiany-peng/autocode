@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 
 /**
  * @author ${author}
@@ -36,6 +38,7 @@ public class ${className}Controller {
      * @return
      */
     @RequestMapping(value = "", method={ RequestMethod.GET})
+    @RequiresPermissions("${classnameSmall}:list")
     String to${className}Page(){
         return prefix + "/${classNameSmall}List";
     }
@@ -50,6 +53,7 @@ public class ${className}Controller {
     */
     @RequestMapping(value = "/list")
     @ResponseBody
+    @RequiresPermissions("${classnameSmall}:list")
     public Page list(${className} ${classNameSmall},String offset,String limit) {
         Page page = new Page();
         page.setPageNumber((Integer.valueOf(offset) / (Integer.valueOf(limit))));
@@ -57,7 +61,6 @@ public class ${className}Controller {
         page = ${classNameSmall}Service.list(${classNameSmall}, page);
         return page;
     }
-#else
     /**
      * 多条件#if($fuzzyLookup)模糊#end 查询
      * @param ${classNameSmall}
@@ -65,13 +68,15 @@ public class ${className}Controller {
      */
     @RequestMapping(value = "/list")
     @ResponseBody
+    @RequiresPermissions("${classnameSmall}:list")
     public List<${className}> list(${className} ${classNameSmall}) {
-#if($fuzzyLookup)
-    return ${classNameSmall}Service.listByFuzzy(${classNameSmall});
-#else
-    return ${classNameSmall}Service.list(${classNameSmall});
-#end
+        #if($fuzzyLookup)
+            return ${classNameSmall}Service.listByFuzzy(${classNameSmall});
+        #else
+            return ${classNameSmall}Service.list(${classNameSmall});
+        #end
     }
+#else
 #end
     /**
      * 进入查看页面
@@ -80,8 +85,10 @@ public class ${className}Controller {
      * @return
      */
     @RequestMapping(value = "/view", method={ RequestMethod.GET})
+    @RequiresPermissions("${classnameSmall}:list")
     String view(Model model,$pk.attrType $pk.attrNameSmall){
         ${className} $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
+    }
         model.addAttribute("$classNameSmall", $classNameSmall);
         model.addAttribute("isReadonly", 1);
         return prefix + "/${classNameSmall}Edit";
@@ -94,6 +101,7 @@ public class ${className}Controller {
      * @return
      */
     @RequestMapping(value = "/edit", method={ RequestMethod.GET})
+    @RequiresPermissions("${classnameSmall}:edit")
     String edit(Model model,$pk.attrType $pk.attrNameSmall){
         ${className} $classNameSmall = null;
 #if($pk.attrType == "Long" || $pk.attrType == "Integer")
@@ -114,10 +122,10 @@ public class ${className}Controller {
      */
     @ResponseBody
     @RequestMapping(value = "/save", method={ RequestMethod.POST})
+    @RequiresPermissions(value={"${classnameSmall}:add","${classnameSmall}:edit"},logical= Logical.OR)
     public R save( ${className} ${classNameSmall},HttpServletRequest request){
         User user = (User)request.getSession().getAttribute("currentUser");
         ${classNameSmall}.setUpdateBy(user.getWorkcode());
-        ##${classNameSmall}.setUpdateTime(new Date());
 #if($pk.attrType == "Long" || $pk.attrType == "Integer")
         if(${classNameSmall}.get${pk.attrName}() != null){
 #else
@@ -127,12 +135,8 @@ public class ${className}Controller {
                 return R.ok();
             }
          }else{
-#if($isLogicDelete)
-            ${classNameSmall}.setIsDelete(0);
-#end
             ${classNameSmall}.setCreateBy(user.getWorkcode());
-            ##${classNameSmall}.setCreateTime(new Date());
-            if (${classNameSmall}Service.insert(${classNameSmall}) > 0) {
+            if(${classNameSmall}Service.insert(${classNameSmall}) > 0) {
                 return R.ok();
             }
         }
@@ -146,6 +150,7 @@ public class ${className}Controller {
      */
     @ResponseBody
     @RequestMapping(value = "/delete", method={ RequestMethod.POST})
+    @RequiresPermissions("${classnameSmall}:delete")
     public R delete( $pk.attrType $pk.attrNameSmall){
 #if($isLogicDelete)
         if(${classNameSmall}Service.deleteLogic($pk.attrNameSmall)>0){
@@ -157,4 +162,18 @@ public class ${className}Controller {
         return R.error();
     }
 
+#if($batchRemove)
+    /**
+     * 批量删除
+     * @param ${pk.attrNameSmall}s
+     * @return
+     */
+    @PostMapping( "/batchRemove")
+    @ResponseBody
+    @RequiresPermissions("${classnameSmall}:batchRemove")
+    public R remove(@RequestParam("ids[]") ${pk.attrType}[] ${pk.attrNameSmall}s){
+            ${classnameSmall}Service.batchRemove(${pk.attrNameSmall}s);
+        return R.ok();
+    }
+#end
 }

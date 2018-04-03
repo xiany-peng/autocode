@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
  * @date 2018/3/25
  */
 @Component
-@ConfigurationProperties(prefix = "autocode")
 public class AutocodeConfig {
 
     //数据库类型
