@@ -80,15 +80,4 @@ public class GeneratorController {
         IOUtils.write(data, response.getOutputStream());
     }
 
-    /**
-     * 批量生成代码
-     * @param request
-     * @param response
-     * @param tables
-     * @throws IOException
-     */
-    @GetMapping("/changeDataSource")
-    void batchCode(){
-        DataSourceUtil.initSubmitTypeAndConnectionType();
-    }
 }

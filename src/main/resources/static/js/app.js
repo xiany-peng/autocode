@@ -1,10 +1,25 @@
 $(function(){
 
+    // MetsiMenu
+    $('#side-menu').metisMenu();
+
     // 菜单切换
     $('.navbar-minimalize').click(function () {
         $("body").toggleClass("mini-navbar");
         SmoothlyMenu();
     });
+
+    $('#side-menu>li').click(function () {
+        if ($('body').hasClass('mini-navbar')) {
+            NavToggle();
+        }
+    });
+    $('#side-menu>li li a').click(function () {
+        if ($(window).width() < 769) {
+            NavToggle();
+        }
+    });
+
 
 })
 
@@ -24,4 +39,8 @@ function SmoothlyMenu() {
     } else {
         $('#side-menu').removeAttr('style');
     }
+}
+
+function NavToggle() {
+    $('.navbar-minimalize').trigger('click');
 }
