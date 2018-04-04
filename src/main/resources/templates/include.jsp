@@ -13,9 +13,15 @@
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="<%=basePath %>/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="<%=basePath %>/plugins/bootstraptable/bootstrap-table.css">
+
+
     <link rel="stylesheet" href="<%=basePath%>/hplus/css/plugins/iCheck/custom.css" rel="stylesheet">
+
+
     <link rel="stylesheet" href="<%=basePath%>/hplus/css/animate.css" rel="stylesheet">
     <link rel="stylesheet" href="<%=basePath%>/hplus/css/style.css?v=4.0.0" rel="stylesheet">
+
+
     <link href="<%=basePath %>/hplus/css/font-awesome.min.css" rel="stylesheet">
     <link href="<%=basePath %>/plugins/bootstrapValidator/css/bootstrapValidator.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<%=basePath%>/css/custom-style/base-css.css" rel="stylesheet">
@@ -32,6 +38,8 @@
 <script src="<%=basePath%>/bootstrap/js/bootstrap.min.js?v=3.3.6"></script>
 <script src="<%=basePath%>/plugins/bootstraptable/bootstrap-table.min.js"></script>
 <script src="<%=basePath%>/plugins/bootstraptable/locale/bootstrap-table-zh-CN.min.js"></script>
+
+
 <script src="<%=basePath %>/plugins/layer/layer.js"></script>
 <script src="<%=basePath %>/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.js"></script>
 <script src="<%=basePath %>/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>

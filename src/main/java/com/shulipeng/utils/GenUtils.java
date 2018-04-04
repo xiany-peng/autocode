@@ -13,6 +13,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -89,7 +90,7 @@ public class GenUtils {
         map.put("classNameSmall", table.getClassNameSmall());
         //map.put("pathName", conf.getString("package").substring(config.getString("package").lastIndexOf(".") + 1));
         map.put("columns", table.getColumns());
-        map.put("package", config.getString("package"));
+        map.put("package", config.getString("packageName"));
         map.put("author", config.getString("author"));
         map.put("company", config.getString("company"));
         map.put("email", config.getString("email"));

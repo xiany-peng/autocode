@@ -39,7 +39,7 @@ function loadTable(){
                   formatter : function(value, row, index) {
                      return [
                          '<a class="generator btn btn-primary btn-sm" href="#"  title="生成">',
-                         '<span class="fa fa-code"></span>',
+                         '<span class="fa fa-download"></span>',
                          '</a> '
                      ].join("");
                   },
@@ -63,4 +63,15 @@ function batchCode(){
         tables.push(v.tableName);
     });
     location.href = prefix + "/batchCode?tables="+JSON.parse(tables);
+}
+
+function generatorConfig(){
+    layer.open({
+        type : 2,
+        title : '配置',
+        maxmin : true,
+        shadeClose : false,
+        area : [ '90%', '90%' ],
+        content : '/config/generator'
+    });
 }

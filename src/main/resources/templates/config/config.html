@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<meta charset="UTF-8">
+<head th:include="include::header"></head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox-content">
+                <form class="form-horizontal m-t" id="exampleForm">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required">包名：</label>
+                        <div class="col-sm-8">
+                            <input id="packageName" name="packageName" class="form-control"
+                                   type="text" th:value="${generator.packageName}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label ">模块名：</label>
+                        <div class="col-sm-8">
+                            <input id="module" name="module" class="form-control" type="text"
+                                   th:value="${generator.module}" placeholder="默认是类名" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label ">作者：</label>
+                        <div class="col-sm-8">
+                            <input id="author" name="author" class="form-control"
+                                   type="text" th:value="${generator.author}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label ">公司：</label>
+                        <div class="col-sm-8">
+                            <input id="company" name="company" class="form-control"
+                                   type="text" th:value="${generator.company}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">需要去除的表前缀：</label>
+                        <div class="col-sm-8">
+                            <input id="needRemovePre" name="needRemovePre" class="form-control"
+                                   type="text" th:value="${generator.needRemovePre}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label ">文件类型：</label>
+                        <div class="col-sm-8">
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.bgFileType}" type="radio" name="bgFileType" value="jsp" />
+                                JSP
+                            </label> <label class="radio-inline"> <input
+                                th:field="*{generator.bgFileType}" type="radio" name="bgFileType" value="html" />
+                                HTML
+                        </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">分页方式：</label>
+                        <div class="col-sm-8">
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.sidePagination}" type="radio" name="sidePagination" value="server" />
+                                Server
+                            </label> <label class="radio-inline"> <input
+                                th:field="*{generator.sidePagination}" type="radio" name="sidePagination" value="client" />
+                                 Client
+                        </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">模糊查询：</label>
+                        <div class="col-sm-8">
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.fuzzyLookup}" type="radio" name="fuzzyLookup" value="true" />
+                                是
+                            </label>
+                            <label class="radio-inline"> <input
+                                th:field="*{generator.fuzzyLookup}" type="radio" name="fuzzyLookup" value="false" />
+                                 否
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">批量删除：</label>
+                        <div class="col-sm-8">
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.batchRemove}" type="radio" name="batchRemove" value="true" />
+                                是
+                            </label>
+                            <label class="radio-inline"> <input
+                                th:field="*{generator.batchRemove}" type="radio" name="batchRemove" value="false" />
+                                 否
+                            </label>
+                        </div>
+                    </div>
+                    <input type="text" name="bgPlugins[]" id="bgPlugins" value="ceshi,aasd">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">前台所需插件：</label>
+                        <div class="col-sm-8">
+                            <label th:each="bgPlugin:${bgAllPlugins}" class="checkbox-inline">
+                                <input name="bgPlugin" type="checkbox" th:value="${bgPlugin}"
+                                       th:text="${bgPlugin}" th:checked="${#lists.contains(generator.bgPlugins,bgPlugin)}">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 text-center">
+                            <button  type="submit" class="btn btn-primary">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript" src="/js/appjs/config/config.js">
+</script>
+</body>
+</html>
