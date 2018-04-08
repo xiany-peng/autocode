@@ -28,7 +28,7 @@ public class Generator {
 
     private Boolean fuzzyLookup;//模糊查询
 
-    private String bgPlugins;//前端所需插件
+    private String[] bgPlugins;//前端所需插件
 
     public String getPackageName() {
         return packageName;
@@ -102,11 +102,11 @@ public class Generator {
         this.fuzzyLookup = fuzzyLookup;
     }
 
-    public String getBgPlugins() {
+    public String[] getBgPlugins() {
         return bgPlugins;
     }
 
-    public void setBgPlugins(String bgPlugins) {
+    public void setBgPlugins(String[] bgPlugins) {
         this.bgPlugins = bgPlugins;
     }
 }

@@ -141,7 +141,7 @@ public class ConfigController {
      */
     @PostMapping("/generator/update")
     @ResponseBody
-    R changeGenerator(Generator generator){
+    R changeGenerator(@RequestBody Generator generator){
         try {
             PropertiesConfiguration conf = new PropertiesConfiguration("bg.properties");
             BeanUtils.beanToProperty(generator,conf);

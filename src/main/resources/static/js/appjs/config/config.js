@@ -19,7 +19,8 @@ function update() {
     $.ajax({
         type : "POST",
         url : "/config/generator/update",
-        data : $('#exampleForm').serialize(),// 你的formid
+        data : serializeToJSON($('#exampleForm').serialize()),// 你的formid
+        contentType: "application/json",
         async : false,
         error : function(request) {
             layer.alert("网络连接超时");
