@@ -18,12 +18,12 @@ public class Constant {
     public static final String DB_TYPE_MYSQL = "mysql";
 
     /**
-     * 后台文件类型 jsp
+     * 前台文件类型 jsp
      */
-    public static final String BG_FILE_TYPE_JSP = "jsp";
+    public static final String FG_FILE_TYPE_JSP = "jsp";
     /**
-     * 后台文件类型 html
+     * 前台文件类型 html
      */
-    public static final String BG_FILE_TYPE_HTML = "html";
+    public static final String FG_FILE_TYPE_HTML = "html";
 
 }

@@ -1,7 +1,7 @@
 package com.shulipeng.controller;
 
 import com.shulipeng.config.DataSourceConfig;
-import com.shulipeng.domain.BgAddr;
+import com.shulipeng.domain.PluginAddr;
 import com.shulipeng.domain.Db;
 import com.shulipeng.domain.Generator;
 import com.shulipeng.utils.BeanUtils;
@@ -11,18 +11,9 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * @author pengxianyang
@@ -82,30 +73,30 @@ public class ConfigController {
      * @param model
      * @return
      */
-    @GetMapping("/bg")
-    String toBgAddrPage(Model  model){
+    @GetMapping("/addr")
+    String toPluginAddrPage(Model  model){
         try {
-            PropertiesConfiguration conf = new PropertiesConfiguration("bg.properties");
-            BgAddr bgAddr = BeanUtils.propertyToBean(BgAddr.class,conf);
-            model.addAttribute("bg",bgAddr);
+            PropertiesConfiguration conf = new PropertiesConfiguration("addr.properties");
+            PluginAddr pluginAddr = BeanUtils.propertyToBean(PluginAddr.class,conf);
+            model.addAttribute("addr", pluginAddr);
         } catch (ConfigurationException e) {
             logger.error("获取前端地址配置文件失败：" + e);
         }
-        return  prefix + "/bg";
+        return  prefix + "/addr";
     }
 
 
     /**
      * 保存前端地址
-     * @param bgAddr
+     * @param pluginAddr
      * @return
      */
-    @PostMapping("/bg/update")
+    @PostMapping("/addr/update")
     @ResponseBody
-    R changeBgAddr(BgAddr bgAddr){
+    R changePluginAddr(PluginAddr pluginAddr){
         try {
-            PropertiesConfiguration conf = new PropertiesConfiguration("bg.properties");
-            BeanUtils.beanToProperty(bgAddr,conf);
+            PropertiesConfiguration conf = new PropertiesConfiguration("addr.properties");
+            BeanUtils.beanToProperty(pluginAddr,conf);
             conf.save();
         } catch (ConfigurationException e) {
             logger.error("获取前端地址配置文件失败：" + e);
@@ -126,8 +117,8 @@ public class ConfigController {
             Generator generator =  BeanUtils.propertyToBean(Generator.class,conf);
             model.addAttribute("generator",generator);
 
-            String[] bgAllPlugins =  conf.getStringArray("bgAllPlugins");
-            model.addAttribute("bgAllPlugins",bgAllPlugins);
+            String[] fgAllPlugins =  conf.getStringArray("fgAllPlugins");
+            model.addAttribute("fgAllPlugins",fgAllPlugins);
         } catch (ConfigurationException e) {
             logger.error("获取 生成配置 文件失败："+e);
         }
@@ -136,14 +127,14 @@ public class ConfigController {
 
     /**
      * 保存生成配置
-     * @param bgAddr
+     * @param generator
      * @return
      */
     @PostMapping("/generator/update")
     @ResponseBody
     R changeGenerator(@RequestBody Generator generator){
         try {
-            PropertiesConfiguration conf = new PropertiesConfiguration("bg.properties");
+            PropertiesConfiguration conf = new PropertiesConfiguration("generator.properties");
             BeanUtils.beanToProperty(generator,conf);
             conf.save();
         } catch (ConfigurationException e) {

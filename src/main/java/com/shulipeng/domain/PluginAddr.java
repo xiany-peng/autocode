@@ -6,7 +6,7 @@ package com.shulipeng.domain;
  * @company QingDao Airlines
  * @description 前端控件地址
  */
-public class BgAddr {
+public class PluginAddr {
 
     private String jquery;
 

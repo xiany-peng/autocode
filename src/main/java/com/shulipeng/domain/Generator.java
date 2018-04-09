@@ -20,7 +20,7 @@ public class Generator {
 
     private String needRemovePre;//需要去除的表前缀
 
-    private String bgFileType;//前台文件类型 可分为 html 和 jsp
+    private String fgFileType;//前台文件类型 可分为 html 和 jsp
 
     private String sidePagination;//前台分页还是后台分页 server client
 
@@ -28,7 +28,7 @@ public class Generator {
 
     private Boolean fuzzyLookup;//模糊查询
 
-    private String[] bgPlugins;//前端所需插件
+    private String[] fgPlugins;//前端所需插件
 
     public String getPackageName() {
         return packageName;
@@ -70,14 +70,6 @@ public class Generator {
         this.needRemovePre = needRemovePre;
     }
 
-    public String getBgFileType() {
-        return bgFileType;
-    }
-
-    public void setBgFileType(String bgFileType) {
-        this.bgFileType = bgFileType;
-    }
-
     public String getSidePagination() {
         return sidePagination;
     }
@@ -102,11 +94,19 @@ public class Generator {
         this.fuzzyLookup = fuzzyLookup;
     }
 
-    public String[] getBgPlugins() {
-        return bgPlugins;
+    public String getFgFileType() {
+        return fgFileType;
     }
 
-    public void setBgPlugins(String[] bgPlugins) {
-        this.bgPlugins = bgPlugins;
+    public void setFgFileType(String fgFileType) {
+        this.fgFileType = fgFileType;
+    }
+
+    public String[] getFgPlugins() {
+        return fgPlugins;
+    }
+
+    public void setFgPlugins(String[] fgPlugins) {
+        this.fgPlugins = fgPlugins;
     }
 }

@@ -2,6 +2,7 @@ package com.shulipeng.utils;
 
 import com.shulipeng.config.Constant;
 import com.shulipeng.domain.Column;
+import com.shulipeng.domain.PluginAddr;
 import com.shulipeng.domain.Table;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -13,10 +14,8 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
@@ -101,12 +100,14 @@ public class GenUtils {
         map.put("batchRemove", config.getBoolean("batchRemove",true));//是否含有软删标志
         map.put("fuzzyLookup", config.getBoolean("fuzzyLookup",false));//是否需要模糊查询
         map.put("sidePagination", config.getString("sidePagination","server"));//分页方式
+        map.put("fgPlugins", config.getStringArray("fgPlugins"));//前段需要插件
+        map.put("fgPluginAddr", getPluginAddr());//前段所有插件地址
         map.put("module", module);//分页方式，
         VelocityContext context = new VelocityContext(map);
 
         //4.获取模板文件
-        String bgFileType = config.getString("bgFileType",Constant.BG_FILE_TYPE_JSP);
-        List<String> templates = getTemplate(dbType,bgFileType);
+        String fgFileType = config.getString("fgFileType",Constant.FG_FILE_TYPE_JSP);
+        List<String> templates = getTemplate(dbType,fgFileType);
         for(String template : templates){
             //渲染模板
             StringWriter sw = new StringWriter();
@@ -115,7 +116,7 @@ public class GenUtils {
 
             try {
                 //添加到zip
-                zip.putNextEntry(new ZipEntry(getFileName(template, table.getClassNameSmall(), table.getClassName(),config.getString("package"),module,bgFileType )));
+                zip.putNextEntry(new ZipEntry(getFileName(template, table.getClassNameSmall(), table.getClassName(),config.getString("package"),module,fgFileType )));
                 IOUtils.write(sw.toString(), zip, "UTF-8");
                 IOUtils.closeQuietly(sw);
                 zip.closeEntry();
@@ -124,6 +125,7 @@ public class GenUtils {
             }
         }
     }
+
 
     /**
      * 获取配置文件
@@ -181,7 +183,7 @@ public class GenUtils {
      * @param dbType
      * @return
      */
-    private static List<String> getTemplate(String dbType,String bgFileType) {
+    private static List<String> getTemplate(String dbType,String fgFileType) {
         List<String> templates = new ArrayList<>();
         templates.add(String.format("templates/vm/%s/domain.java.vm",dbType));
         templates.add(String.format("templates/vm/%s/dao.java.vm",dbType));
@@ -189,7 +191,7 @@ public class GenUtils {
         templates.add(String.format("templates/vm/%s/service.java.vm",dbType));
         templates.add(String.format("templates/vm/%s/serviceImpl.java.vm",dbType));
         templates.add(String.format("templates/vm/%s/controller.java.vm",dbType));
-        if(Constant.BG_FILE_TYPE_JSP.equals(bgFileType)){
+        if(Constant.FG_FILE_TYPE_JSP.equals(fgFileType)){
             templates.add(String.format("templates/vm/%s/list.jsp.vm",dbType));
             templates.add(String.format("templates/vm/%s/edit.jsp.vm",dbType));
             templates.add(String.format("templates/vm/%s/add.jsp.vm",dbType));
@@ -203,10 +205,10 @@ public class GenUtils {
      * @param classNameSmall
      * @param className
      * @param module
-     * @param bgFileType
+     * @param fgFileType
      * @return
      */
-    private static String getFileName(String template, String classNameSmall, String className, String packageName,String module,String bgFileType) {
+    private static String getFileName(String template, String classNameSmall, String className, String packageName,String module,String fgFileType) {
         //将包路径改为真实的文件路径
         if(StringUtils.isNotBlank(packageName)){
             packageName = packageName.replace(".",File.separator);
@@ -235,7 +237,7 @@ public class GenUtils {
         }
 
         //以下需要根据框架分类
-        if(Constant.BG_FILE_TYPE_JSP.equals(bgFileType)){
+        if(Constant.FG_FILE_TYPE_JSP.equals(fgFileType)){
             //mapper
             if(template.contains("mapper.xml.vm")){
                 return basePath +"mapper" + File.separator + module + File.separator + className + "Mapper.xml";
@@ -260,6 +262,18 @@ public class GenUtils {
         }
 
         return "";
+    }
+
+    /**
+     * 获取所有插件的地址
+     * @return
+     */
+    private static PluginAddr getPluginAddr() {
+        try {
+            return BeanUtils.propertyToBean(PluginAddr.class, new PropertiesConfiguration("addr.properties"));
+        } catch (ConfigurationException e) {
+            throw new RuntimeException("获取配置文件失败:",e);
+        }
     }
 
 

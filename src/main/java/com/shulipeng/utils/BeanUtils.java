@@ -3,9 +3,9 @@ package com.shulipeng.utils;
 
 
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.thymeleaf.util.StringUtils;
 import sun.reflect.misc.ReflectUtil;
 
 import java.lang.reflect.Field;
@@ -92,7 +92,10 @@ public  class BeanUtils {
             try {
                 String simpleName = f.getType().getSimpleName();
                 if("String[]".equals(simpleName)){
-                    prop.setProperty(f.getName(),(String[])f.get(bean));
+                    String[] arr = (String[])f.get(bean);
+                    prop.setProperty(f.getName(), arr != null ?  StringUtils.join((String[])f.get(bean),",") : "");
+                }else if("Boolean".equals(simpleName)){
+                    prop.setProperty(f.getName(),f.get(bean));
                 }else{
                     prop.setProperty(f.getName(),(String)f.get(bean));
                 }

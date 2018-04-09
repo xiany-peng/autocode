@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <meta charset="UTF-8">
 <head th:include="include::header"></head>
-<body class="gray-bg">
+<body class="gray-fg">
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
         <div class="col-sm-12">
@@ -47,10 +47,10 @@
                         <label class="col-sm-3 control-label ">文件类型：</label>
                         <div class="col-sm-8">
                             <label class="radio-inline"> <input
-                                    th:field="*{generator.bgFileType}" type="radio" name="bgFileType" value="jsp" />
+                                    th:field="*{generator.fgFileType}" type="radio" name="fgFileType" value="jsp" />
                                 JSP
                             </label> <label class="radio-inline"> <input
-                                th:field="*{generator.bgFileType}" type="radio" name="bgFileType" value="html" />
+                                th:field="*{generator.fgFileType}" type="radio" name="fgFileType" value="html" />
                                 HTML
                         </label>
                         </div>
@@ -96,9 +96,9 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">前台所需插件：</label>
                         <div class="col-sm-8">
-                            <label th:each="bgPlugin:${bgAllPlugins}" class="checkbox-inline">
-                                <input name="bgPlugin" type="checkbox" th:value="${bgPlugin}"
-                                       th:text="${bgPlugin}" th:checked="${#lists.contains(generator.bgPlugins,bgPlugin)}">
+                            <label th:each="fgPlugin:${fgAllPlugins}" class="checkbox-inline">
+                                <input name="fgPlugins[]" type="checkbox" th:value="${fgPlugin}"
+                                       th:text="${fgPlugin}" th:checked="${#lists.contains(generator.fgPlugins,fgPlugin)}">
                             </label>
                         </div>
                     </div>

@@ -18,7 +18,7 @@ $.validator.setDefaults({
 function update() {
     $.ajax({
         type : "POST",
-        url : "/config/bg/update",
+        url : "/config/addr/update",
         data : $('#exampleForm').serialize(),// 你的formid
         async : false,
         error : function(request) {
