@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="${package}.dao.${module}.${className}Mapper">
+
+    <!-- 增加 -->
+    <insert id="insert" parameterType="${package}.entity.${module}.${className}" #if($pk.extra == 'auto_increment') useGeneratedKeys="true" keyProperty="$pk.attrNameSmall"#end >
+        insert into ${tableName}
+        (
+#foreach($column in $columns)
+#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
+          `$column.columnName`#if($velocityCount != $columns.size()),#end
+
+#end
+#end
+        )
+        values
+        (
+#foreach($column in $columns)
+#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
+#if($column.columnName == 'create_time' || $column.columnName == 'create_date' || $column.columnName == 'update_time' || $column.columnName == 'update_date')
+          now()#if($velocityCount != $columns.size()),#end
+#else
+          #{$column.attrNameSmall}#if($velocityCount != $columns.size()),#end
+#end
+
+#end
+#end
+        )
+    </insert>
+
+#if($isLogicDelete)
+    <!-- 逻辑删除 -->
+    <delete id="deleteLogic" >
+        update ${tableName} set is_delete = 1
+        where $pk.columnName = #{$pk.attrNameSmall}
+    </delete>
+#else
+    <!-- 物理删除 -->
+    <delete id="delete" >
+        delete from ${tableName}
+        where $pk.columnName = #{$pk.attrNameSmall}
+    </delete>
+#end
+
+#if($batchRemove)
+    <!-- 批量删除 -->
+    <delete id="batchRemove" >
+#if($isLogicDelete)
+        update ${tableName} set is_delete = 1
+#else
+        delete from ${tableName}
+#end
+        where $pk.columnName in
+        <foreach collection="array" item="${pk.attrNameSmall}" open="(" separator="," close="(">
+            (#{$pk.attrNameSmall})
+        </foreach>
+    </delete>
+#end
+
+    <!-- 修改 -->
+    <update id="update" parameterType="${package}.entity.${module}.${className}">
+        update ${tableName}
+        <set>
+#foreach($column in $columns)
+#if($column.columnName != $pk.columnName)
+#if($column.columnName == 'update_time' || $column.columnName == 'update_date')
+         $column.columnName` = now(),
+#else
+         <if test="$column.attrNameSmall != null">`$column.columnName` = #{$column.attrNameSmall},</if>
+#end
+#end
+#end
+        </set>
+        where $pk.columnName = #{$pk.attrNameSmall}
+    </update>
+
+    <!-- 通过主键ID查询 -->
+    <select id="get" resultType="${package}.entity.${module}.${className}">
+        select
+#foreach($column in $columns)
+#if($column.attrType == "Date")
+            date_format(t.`${column.columnName}`,'%Y-%m-%d %H:%i:%s') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
+#else
+            t.`${column.columnName}` $column.attrNameSmall #if($velocityCount != $columns.size()),#end
+#end
+
+#end
+        from ${tableName} t
+        where t.${pk.columnName} = #{$pk.attrNameSmall}
+    </select>
+
+    <!-- 多条件查询 -->
+    <select id="list" resultType="${package}.entity.${module}.${className}">
+        select
+#foreach($column in $columns)
+#if($column.attrType == "Date")
+            date_format(t.`${column.columnName}`,'%Y-%m-%d %H:%i:%s') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
+#else
+            t.`${column.columnName}` $column.attrNameSmall#if($velocityCount != $columns.size()),#end
+#end
+
+#end
+        from ${tableName} t
+        where 1 = 1
+#if($isLogicDelete)
+        and t.is_delete = 0
+#end
+#foreach($column in $columns)
+        <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">and t.${column.columnName} = #{$column.attrNameSmall}</if>
+#end
+    </select>
+
+#if($fuzzyLookup)
+    <!-- 多条件模糊查询 -->
+    <select id="listByFuzzy" resultType="${package}.entity.${module}.${className}">
+        select
+#foreach($column in $columns)
+#if($column.attrType == "Date")
+            date_format(t.`${column.columnName}`,'%Y-%m-%d %H:%i:%s') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
+#else
+            t.`${column.columnName}` $column.attrNameSmall#if($velocityCount != $columns.size()),#end
+#end
+
+#end
+        from ${tableName} t
+        where 1=1
+#if($isLogicDelete)
+        and t.is_delete = 0
+#end
+#foreach($column in $columns)
+        <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">and t.${column.columnName} #if($column.attrType == "String")like concat('%',#{$column.attrNameSmall},'%')#else= #{$column.attrNameSmall}#end </if>
+#end
+    </select>
+#end
+</mapper>

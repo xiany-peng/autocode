@@ -1,0 +1,238 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%
+    String path = request.getContextPath();
+    String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
+%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${comment}列表</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="shortcut icon" href="favicon.ico">
+#foreach($plugin in $fgPlugins)
+#if($plugin == 'bootstrap')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.bootstrapPrefix}/css/bootstrap.min.css">
+#elseif($plugin == 'bootstrapTable')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.bootstraptablePrefix}/bootstrap-table.css">
+#elseif($plugin == 'bootstrapValidator')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.bootstrapValidatorPrefix}/css/bootstrapValidator.min.css">
+#elseif($plugin == 'bootstrapDatetimepicker')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.datetimepickerPrefix}/bootstrap-datetimepicker.css">
+#elseif($plugin == 'fontAwesome')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.fontAwesomePrefix}/css/font-awesome.min.css">
+#elseif($plugin == 'select2')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.select2Prefix}/css/select2.min.css">
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.select2Prefix}/css/select2-bootstrap.min.css">
+#elseif($plugin == 'uploadfive')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.uploadfivePrefix}/uploadfive.css">
+#elseif($plugin == 'ztree')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.ztreePrefix}/css/zTreeStyle/zTreeStyle.css">
+#elseif($plugin == 'hplus')
+    <link rel="stylesheet" href="<%=basePath%>${fgPluginAddr.hplusPrefix}/css/animate.css" >
+    <link rel="stylesheet" href="<%=basePath%>${fgPluginAddr.hplusPrefix}/css/style.css" >
+#end
+#end
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+			<div class="row">
+		    <div class="col-md-12 col-sm-12">
+			  	<div class="ibox float-e-margins">
+			  		<div class="ibox-title ibox-title-blue">
+			  			<h5><i class="fa fa-file-text"></i>&nbsp;${comment}</h5>
+			  		</div>
+			  		<div class="ibox-content">
+			  		   <div class="btn-group table-tool">
+	                        <input id="query_param" type="text" class="table-tool-btn"
+	                          placeholder="查询参数"/>
+	                    </div>
+	                    <div class="btn-group table-tool" id="table0-toolbar" role="group">
+	                        <button type="button" onclick="add()" class="btn btn-outline btn-success btn-add" data-toggle="tooltip" title="添加">
+	                            <i class="fa fa-plus" aria-hidden="true"></i>
+	                        </button>
+	                        <button type="button" onclick="edit()" class="btn btn-outline btn-success btn-edit" data-toggle="tooltip" title="修改">
+	                            <i class="fa fa-edit" aria-hidden="true"></i>
+	                        </button>
+	                        <button type="button" onclick="remove()"
+	                                class="btn btn-outline btn-success btn-delete" data-toggle="tooltip" title="删除">
+	                            <i class="fa fa-trash" aria-hidden="true"></i>
+	                        </button>
+	                        <button type="button" onclick="reload()" class="btn btn-outline btn-success btn-refresh" data-toggle="tooltip" title="刷新">
+	                            <i class="fa fa-refresh" aria-hidden="true"></i>
+	                        </button>
+	                   </div>
+		  			  <table id="exampleTable" data-classes="table table-hover table-condensed">
+                         <thead>
+                             <tr>
+                             </tr>
+                         </thead>
+                     </table>
+			  		</div>
+			  	</div>
+			</div>
+		</div>
+</div>
+
+#foreach($plugin in $fgPlugins)
+#if($plugin == 'jquery')
+    <script src="<%=basePath%>${fgPluginAddr.jquery}"></script>
+#elseif($plugin == 'bootstrap')
+    <script src="<%=basePath%>${fgPluginAddr.bootstrapPrefix}/js/bootstrap.min.js"></script>
+#elseif($plugin == 'bootstrapTable')
+    <script src="<%=basePath%>${fgPluginAddr.bootstrapPrefix}/bootstrap-table.min.js"></script>
+    <script src="<%=basePath%>${fgPluginAddr.bootstrapPrefix}/locale/bootstrap-table-zh-CN.min.js"></script>
+#elseif($plugin == 'bootstrapValidator')
+    <script src="<%=basePath%>${fgPluginAddr.bootstrapValidatorPrefix}/js/bootstrapValidator.js"></script>
+    <script src="<%=basePath%>${fgPluginAddr.bootstrapValidatorPrefix}/js/language/zh_CN.js"></script>
+#elseif($plugin == 'bootstrapDatetimepicker')
+    <script src="<%=basePath%>${fgPluginAddr.datetimepickerPrefix}/bootstrap-datetimepicker.js"></script>
+    <script src="<%=basePath%>${fgPluginAddr.datetimepickerPrefix}/bootstrap-datetimepicker.zh-CN.js"></script>
+#elseif($plugin == 'layer')
+    <script src="<%=basePath %>${fgPluginAddr.layerPrefix}/layer.js"></script>
+#elseif($plugin == 'select2')
+    <script src="<%=basePath%>${fgPluginAddr.select2Prefix}/select2.min.js"></script>
+#elseif($plugin == 'uploadfive')
+    <script src="<%=basePath%>${fgPluginAddr.uploadfivePrefix}/jquery.uploadifive.js"></script>
+#elseif($plugin == 'ztree')
+    <script src="<%=basePath%>${fgPluginAddr.uploadfivePrefix}/js/jquery.ztree.core.js"></script>
+#end
+#end
+
+    <!-- 自定义js -->
+    <script>
+        var prefix = "<%=basePath%>/${classNameSmall}";
+        $(function () {
+            load();
+        });
+
+        function load() {
+	        $('#exampleTable').bootstrapTable(
+					    {
+						    method : 'post',
+						    url : prefix + "/list.do",
+						    iconSize : 'outline',
+						    toolbar : '#exampleToolbar',
+                            striped : true,
+                            dataType : "json",
+                            pagination : true,
+                            singleSelect : true,
+                            clickToSelect : true,
+                            pageSize : 10,
+                            pageNumber : 1,
+                            showColumns : false,
+#if(${sidePagination} == 'server')
+                            sidePagination : "server",
+#else
+                            sidePagination : "client",
+#end
+                            contentType : "application/x-www-form-urlencoded",
+                            queryParams : function(params) {
+                                return {
+#if(${sidePagination} == 'server')
+                                    limit: params.limit,
+                                    offset:params.offset
+#end
+                                };
+                            },
+                            columns : [
+                                    {
+                                        radio : true
+                                    },
+#foreach($column in $columns)
+                                    {
+                                        field : '${column.attrNameSmall}',
+                                        title : '${column.comment}'
+                                    },
+#end
+                                    {
+                                        title : '操作',
+                                        field : 'id',
+                                        align : 'center',
+                                        formatter : function(value, row, index) {
+                                        }
+                                    } ]
+                        })
+        }
+        function reload(){
+            $("#exampleTable").bootstrapTable('refresh');
+        }
+
+        function add() {
+            layer.open({
+                type : 2,
+                title : '新增',
+                maxmin : true,
+                shadeClose : false, // 点击遮罩关闭层
+                area : [ '800px', '520px' ],
+                content : prefix + '/edit.do'
+            });
+        }
+
+        function edit() {
+            var rows = $('#exampleTable').bootstrapTable('getSelections');
+            if (rows.length == 0) {
+                layer.msg("请选择需要编辑的数据");
+                return;
+            }
+            var id = rows[0].${pk.attrNameSmall};
+            layer.open({
+                type : 2,
+                title : '编辑',
+                maxmin : true,
+                shadeClose : false, // 点击遮罩关闭层
+                area : [ '800px', '520px' ],
+                content : prefix + '/edit.do?id=' + id
+            });
+        }
+
+
+        function view() {
+            var rows = $('#exampleTable').bootstrapTable('getSelections');
+            if (rows.length == 0) {
+                layer.msg("请选择需要查看的记录");
+                return;
+            }
+            var id = rows[0].${pk.attrNameSmall};
+            layer.open({
+                type : 2,
+                title : '查看',
+                maxmin : true,
+                shadeClose : false, // 点击遮罩关闭层
+                area : [ '800px', '520px' ],
+                content : prefix + '/view.do?id=' + id
+            });
+        }
+
+        function remove(id) {
+            var rows = $('#exampleTable').bootstrapTable('getSelections');
+            if (rows.length == 0) {
+                layer.msg("请选择需要删除的数据");
+                return;
+            }
+            var id = rows[0].${pk.attrNameSmall};
+            layer.confirm('确定要删除选中的记录？', {
+                btn : [ '确定', '取消' ]
+            }, function() {
+                $.ajax({
+                    url : prefix+"/delete.do",
+                    type : "post",
+                    data : {
+                        '${pk.attrNameSmall}' : id
+                    },
+                    success : function(r) {
+                        if (r.code==0) {
+                            layer.msg(r.msg);
+                            reload();
+                        }else{
+                            layer.msg(r.msg);
+                        }
+                    }
+                });
+            })
+        }
+</script>
+</body>
+</html>

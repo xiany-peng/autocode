@@ -7,25 +7,25 @@
     <insert id="insert" parameterType="${package}.entity.${module}.${className}" #if($pk.extra == 'auto_increment') useGeneratedKeys="true" keyProperty="$pk.attrNameSmall"#end >
         insert into ${tableName}
         (
-        #foreach($column in $columns)
-            #if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
-                `$column.columnName`#if($velocityCount != $columns.size()),#end
+#foreach($column in $columns)
+#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
+          `$column.columnName`#if($velocityCount != $columns.size()),#end
 
-            #end
-        #end
+#end
+#end
         )
         values
         (
-        #foreach($column in $columns)
-            #if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
-                #if($column.columnName == 'create_time' || $column.columnName == 'create_date' || $column.columnName == 'update_time' || $column.columnName == 'update_date')
-                    now()#if($velocityCount != $columns.size()),#end
-                #else
-                    #{$column.attrNameSmall}#if($velocityCount != $columns.size()),#end
-                #end
+#foreach($column in $columns)
+#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
+#if($column.columnName == 'create_time' || $column.columnName == 'create_date' || $column.columnName == 'update_time' || $column.columnName == 'update_date')
+          now()#if($velocityCount != $columns.size()),#end
+#else
+          #{$column.attrNameSmall}#if($velocityCount != $columns.size()),#end
+#end
 
-            #end
-        #end
+#end
+#end
         )
     </insert>
 

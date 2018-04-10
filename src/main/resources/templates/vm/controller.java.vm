@@ -38,7 +38,7 @@ public class ${className}Controller {
      * @return
      */
     @RequestMapping(value = "", method={ RequestMethod.GET})
-    @RequiresPermissions("${classnameSmall}:list")
+    @RequiresPermissions("${module}:${classNameSmall}:list")
     String to${className}Page(){
         return prefix + "/${classNameSmall}List";
     }
@@ -53,7 +53,7 @@ public class ${className}Controller {
     */
     @RequestMapping(value = "/list")
     @ResponseBody
-    @RequiresPermissions("${classnameSmall}:list")
+    @RequiresPermissions("${module}:${classNameSmall}:list")
     public Page list(${className} ${classNameSmall},String offset,String limit) {
         Page page = new Page();
         page.setPageNumber((Integer.valueOf(offset) / (Integer.valueOf(limit))));
@@ -69,7 +69,7 @@ public class ${className}Controller {
      */
     @RequestMapping(value = "/list")
     @ResponseBody
-    @RequiresPermissions("${classnameSmall}:list")
+    @RequiresPermissions("${module}:${classNameSmall}:list")
     public List<${className}> list(${className} ${classNameSmall}) {
 #if($fuzzyLookup)
         return ${classNameSmall}Service.listByFuzzy(${classNameSmall});
@@ -86,7 +86,7 @@ public class ${className}Controller {
      * @return
      */
     @RequestMapping(value = "/add", method={ RequestMethod.GET})
-    @RequiresPermissions("${classnameSmall}:add")
+    @RequiresPermissions("${module}:${classNameSmall}:add")
     String add(){
         return prefix + "/${classNameSmall}Add";
     }
@@ -98,7 +98,7 @@ public class ${className}Controller {
      */
     @ResponseBody
     @RequestMapping(value = "/save", method={ RequestMethod.POST})
-    @RequiresPermissions("${classnameSmall}:add")
+    @RequiresPermissions("${module}:${classNameSmall}:add")
     public R save( ${className} ${classNameSmall},HttpServletRequest request){
         User user = (User)request.getSession().getAttribute("currentUser");
 #foreach($column in $columns)
@@ -121,7 +121,7 @@ public class ${className}Controller {
      * @return
      */
     @RequestMapping(value = "/edit", method={ RequestMethod.GET})
-    @RequiresPermissions("${classnameSmall}:edit")
+    @RequiresPermissions("${module}:${classNameSmall}:edit")
     String edit(Model model,$pk.attrType $pk.attrNameSmall){
         ${className} $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
         model.addAttribute("$classNameSmall", $classNameSmall);
@@ -135,7 +135,7 @@ public class ${className}Controller {
      */
     @ResponseBody
     @RequestMapping(value = "/update", method={ RequestMethod.POST})
-    @RequiresPermissions("${classnameSmall}:edit")
+    @RequiresPermissions("${module}:${classNameSmall}:edit")
     public R update( ${className} ${classNameSmall},HttpServletRequest request){
         User user = (User)request.getSession().getAttribute("currentUser");
 #foreach($column in $columns)
@@ -156,7 +156,7 @@ public class ${className}Controller {
      * @return
      */
     @RequestMapping(value = "/view", method={ RequestMethod.GET})
-    @RequiresPermissions("${classnameSmall}:list")
+    @RequiresPermissions("${module}:${classNameSmall}:list")
     String view(Model model,$pk.attrType $pk.attrNameSmall){
         ${className} $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
         model.addAttribute("$classNameSmall", $classNameSmall);
@@ -171,7 +171,7 @@ public class ${className}Controller {
      */
     @ResponseBody
     @RequestMapping(value = "/delete", method={ RequestMethod.POST})
-    @RequiresPermissions("${classnameSmall}:delete")
+    @RequiresPermissions("${module}:${classNameSmall}:delete")
     public R delete( $pk.attrType $pk.attrNameSmall){
 #if($isLogicDelete)
         if(${classNameSmall}Service.deleteLogic($pk.attrNameSmall)>0){
@@ -191,9 +191,9 @@ public class ${className}Controller {
      */
     @PostMapping( "/batchRemove")
     @ResponseBody
-    @RequiresPermissions("${classnameSmall}:batchRemove")
+    @RequiresPermissions("${module}:${classNameSmall}:batchRemove")
     public R remove(@RequestParam("ids[]") ${pk.attrType}[] ${pk.attrNameSmall}s){
-            ${classnameSmall}Service.batchRemove(${pk.attrNameSmall}s);
+            ${classNameSmall}Service.batchRemove(${pk.attrNameSmall}s);
         return R.ok();
     }
 #end

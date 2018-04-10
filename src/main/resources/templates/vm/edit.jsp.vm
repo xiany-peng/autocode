@@ -1,7 +1,37 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
-<%@ include file="/WEB-INF/pages/include.jsp"%>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${comment}编辑</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="shortcut icon" href="favicon.ico">
+#foreach($plugin in $fgPlugins)
+#if($plugin == 'bootstrap')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.bootstrapPrefix}/css/bootstrap.min.css">
+#elseif($plugin == 'bootstrapTable')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.bootstraptablePrefix}/bootstrap-table.css">
+#elseif($plugin == 'bootstrapValidator')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.bootstrapValidatorPrefix}/css/bootstrapValidator.min.css">
+#elseif($plugin == 'bootstrapDatetimepicker')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.datetimepickerPrefix}/bootstrap-datetimepicker.css">
+#elseif($plugin == 'fontAwesome')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.fontAwesomePrefix}/css/font-awesome.min.css">
+#elseif($plugin == 'select2')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.select2Prefix}/css/select2.min.css">
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.select2Prefix}/css/select2-bootstrap.min.css">
+#elseif($plugin == 'uploadfive')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.uploadfivePrefix}/uploadfive.css">
+#elseif($plugin == 'ztree')
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.ztreePrefix}/css/zTreeStyle/zTreeStyle.css">
+#elseif($plugin == 'hplus')
+    <link rel="stylesheet" href="<%=basePath%>${fgPluginAddr.hplusPrefix}/css/animate.css" >
+    <link rel="stylesheet" href="<%=basePath%>${fgPluginAddr.hplusPrefix}/css/style.css" >
+#end
+#end
+</head>
 <body class="gray-bg">
 	<div class="wrapper wrapper-content animated fadeInRight">
 		<div class="row">
@@ -31,6 +61,32 @@
 			</div>
 	</div>
 	</div>
+
+#foreach($plugin in $fgPlugins)
+#if($plugin == 'jquery')
+    <script src="<%=basePath%>${fgPluginAddr.jquery}"></script>
+#elseif($plugin == 'bootstrap')
+    <script src="<%=basePath%>${fgPluginAddr.bootstrapPrefix}/js/bootstrap.min.js"></script>
+#elseif($plugin == 'bootstrapTable')
+    <script src="<%=basePath%>${fgPluginAddr.bootstrapPrefix}/bootstrap-table.min.js"></script>
+    <script src="<%=basePath%>${fgPluginAddr.bootstrapPrefix}/locale/bootstrap-table-zh-CN.min.js"></script>
+#elseif($plugin == 'bootstrapValidator')
+    <script src="<%=basePath%>${fgPluginAddr.bootstrapValidatorPrefix}/js/bootstrapValidator.js"></script>
+    <script src="<%=basePath%>${fgPluginAddr.bootstrapValidatorPrefix}/js/language/zh_CN.js"></script>
+#elseif($plugin == 'bootstrapDatetimepicker')
+    <script src="<%=basePath%>${fgPluginAddr.datetimepickerPrefix}/bootstrap-datetimepicker.js"></script>
+    <script src="<%=basePath%>${fgPluginAddr.datetimepickerPrefix}/bootstrap-datetimepicker.zh-CN.js"></script>
+#elseif($plugin == 'layer')
+    <script src="<%=basePath %>${fgPluginAddr.layerPrefix}/layer.js"></script>
+#elseif($plugin == 'select2')
+    <script src="<%=basePath%>${fgPluginAddr.select2Prefix}/select2.min.js"></script>
+#elseif($plugin == 'uploadfive')
+    <script src="<%=basePath%>${fgPluginAddr.uploadfivePrefix}/jquery.uploadifive.js"></script>
+#elseif($plugin == 'ztree')
+    <script src="<%=basePath%>${fgPluginAddr.uploadfivePrefix}/js/jquery.ztree.core.js"></script>
+#end
+#end
+<!-- 自定义js -->
 	<script type="text/javascript">
         var prefix = "<%=basePath%>/${classNameSmall}";
         var isReadonly = "${isReadonly}";//页面是否只能查看
