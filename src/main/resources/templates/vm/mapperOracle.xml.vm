@@ -4,20 +4,22 @@
 <mapper namespace="${package}.dao.${module}.${className}Mapper">
 
     <!-- 增加 -->
-    <insert id="insert" parameterType="${package}.entity.${module}.${className}" #if($pk.extra == 'auto_increment') useGeneratedKeys="true" keyProperty="$pk.attrNameSmall"#end >
+    <insert id="insert" parameterType="${package}.entity.${module}.${className}" >
+
+         <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="${pk.attrNameSmall}">
+          select ${oracleSequence}.nextval  as ${pk.attrNameSmall}  from dual
+         </selectKey>
+
         insert into ${tableName}
         (
 #foreach($column in $columns)
-#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
           `$column.columnName`#if($velocityCount != $columns.size()),#end
 
-#end
 #end
         )
         values
         (
 #foreach($column in $columns)
-#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
 #if($column.columnName == 'create_time' || $column.columnName == 'create_date' || $column.columnName == 'update_time' || $column.columnName == 'update_date')
           now()#if($velocityCount != $columns.size()),#end
 #else
@@ -80,7 +82,7 @@
         select
 #foreach($column in $columns)
 #if($column.attrType == "Date")
-            date_format(t.`${column.columnName}`,'%Y-%m-%d %H:%i:%s') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
+            to_char(t.`${column.columnName}`,'yyyy-mm-dd hh24:mi:ss') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
 #else
             t.`${column.columnName}` $column.attrNameSmall #if($velocityCount != $columns.size()),#end
 #end
@@ -95,7 +97,7 @@
         select
 #foreach($column in $columns)
 #if($column.attrType == "Date")
-            date_format(t.`${column.columnName}`,'%Y-%m-%d %H:%i:%s') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
+            to_char(t.`${column.columnName}`,'yyyy-mm-dd hh24:mi:ss') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
 #else
             t.`${column.columnName}` $column.attrNameSmall#if($velocityCount != $columns.size()),#end
 #end
@@ -117,7 +119,7 @@
         select
 #foreach($column in $columns)
 #if($column.attrType == "Date")
-            date_format(t.`${column.columnName}`,'%Y-%m-%d %H:%i:%s') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
+            to_char(t.`${column.columnName}`,'yyyy-mm-dd hh24:mi:ss') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
 #else
             t.`${column.columnName}` $column.attrNameSmall#if($velocityCount != $columns.size()),#end
 #end
@@ -129,7 +131,7 @@
         and t.is_delete = 0
 #end
 #foreach($column in $columns)
-        <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">and t.${column.columnName} #if($column.attrType == "String")like concat('%',#{$column.attrNameSmall},'%')#else= #{$column.attrNameSmall}#end </if>
+        <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">and t.${column.columnName} #if($column.attrType == "String")like '%'||#{$column.attrNameSmall}||'%'#else= #{$column.attrNameSmall}#end </if>
 #end
     </select>
 #end

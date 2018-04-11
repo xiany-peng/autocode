@@ -9,7 +9,7 @@
           t.table_name tableName ,
           c.comments tableComment,
           o.created createTime
-        from all_tables t,user_objects o,user_tab_comments c
+        from user_tables t,user_objects o,user_tab_comments c
         where t.table_name = o.object_name
         and t.table_name = c.table_name
         order by t.table_name
@@ -21,7 +21,7 @@
           t.table_name tableName ,
           c.comments tableComment,
           o.created createTime
-        from all_tables t,user_objects o,user_tab_comments c
+        from user_tables t,user_objects o,user_tab_comments c
         where t.table_name = o.object_name
         and t.table_name = c.table_name
         and t.table_name = #{tableName}
@@ -30,15 +30,20 @@
     <!-- 查询一个表所有列 -->
     <select id="listColumns" resultType="com.shulipeng.domain.Column">
         select
-        `column_name` columnName,
-        `data_type` dataType,
-        `column_comment` comment,
-        `column_key` columnKey,
-        `extra`
-        from information_schema.columns
-        where table_name = #{tableName}
-        and table_schema = (select database())
-        order by ordinal_position
+          c.column_name columnName,
+          c.data_type dataType,
+          m.comments as "comment",
+          case when (select count(*)
+                     from user_constraints i1, user_ind_columns i2
+                     where i1.index_name = i2.index_name
+                     and i2.table_name = c.table_name
+                     and i2.column_name = c.column_name
+                     and i1.constraint_type = 'P')
+           > 0  then 'PRI' else '' end columnKey,
+           '' extra
+          from all_tab_cols c,user_col_comments m
+          where c.column_name = m.column_name
+          and c.table_name = #{tableName}
     </select>
 
 </mapper>

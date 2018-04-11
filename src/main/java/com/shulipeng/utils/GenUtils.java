@@ -119,6 +119,7 @@ public class GenUtils {
         context.put("author", config.getString("author"));
         context.put("company", config.getString("company"));
         context.put("email", config.getString("email"));
+        context.put("oracleSequence", config.getString("oracleSequence"));
         context.put("datetime", new DateTime().toString("yyyy/MM/dd HH:mm:ss"));
         context.put("batchRemove", config.getBoolean("batchRemove",true));//是否批量删除
         context.put("fuzzyLookup", config.getBoolean("fuzzyLookup",false));//是否需要模糊查询

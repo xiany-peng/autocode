@@ -1,5 +1,7 @@
 package com.shulipeng.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -8,6 +10,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @Description: 数据库的列
  * @date 2018/3/2522:19
  */
+@Setter
+@Getter
 public class Column {
 
     //列名
@@ -32,67 +36,4 @@ public class Column {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
-    public String getAttrType() {
-        return attrType;
-    }
-
-    public void setAttrType(String attrType) {
-        this.attrType = attrType;
-    }
-
-    public String getColumnKey() {
-        return columnKey;
-    }
-
-    public void setColumnKey(String columnKey) {
-        this.columnKey = columnKey;
-    }
-
-    public String getColumnName() {
-        return columnName;
-    }
-
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
-    }
-
-    public String getDataType() {
-        return dataType;
-    }
-
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public String getExtra() {
-        return extra;
-    }
-
-    public void setExtra(String extra) {
-        this.extra = extra;
-    }
-
-    public String getAttrName() {
-        return attrName;
-    }
-
-    public void setAttrName(String attrName) {
-        this.attrName = attrName;
-    }
-
-    public String getAttrNameSmall() {
-        return attrNameSmall;
-    }
-
-    public void setAttrNameSmall(String attrNameSmall) {
-        this.attrNameSmall = attrNameSmall;
-    }
 }

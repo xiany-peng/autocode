@@ -1,13 +1,17 @@
 package com.shulipeng.domain;
 
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+
 
 /**
  * @author pengxianyang
  * @date 2018/4/4
- * @company QingDao Airlines
+ * @company
  * @description
  */
+@Setter
+@Getter
 public class Generator {
 
     private String packageName;//包名
@@ -30,83 +34,5 @@ public class Generator {
 
     private String[] fgPlugins;//前端所需插件
 
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getCompany() {
-        return company;
-    }
-
-    public void setCompany(String company) {
-        this.company = company;
-    }
-
-    public String getNeedRemovePre() {
-        return needRemovePre;
-    }
-
-    public void setNeedRemovePre(String needRemovePre) {
-        this.needRemovePre = needRemovePre;
-    }
-
-    public String getSidePagination() {
-        return sidePagination;
-    }
-
-    public void setSidePagination(String sidePagination) {
-        this.sidePagination = sidePagination;
-    }
-
-    public Boolean getBatchRemove() {
-        return batchRemove;
-    }
-
-    public void setBatchRemove(Boolean batchRemove) {
-        this.batchRemove = batchRemove;
-    }
-
-    public Boolean getFuzzyLookup() {
-        return fuzzyLookup;
-    }
-
-    public void setFuzzyLookup(Boolean fuzzyLookup) {
-        this.fuzzyLookup = fuzzyLookup;
-    }
-
-    public String getFgFileType() {
-        return fgFileType;
-    }
-
-    public void setFgFileType(String fgFileType) {
-        this.fgFileType = fgFileType;
-    }
-
-    public String[] getFgPlugins() {
-        return fgPlugins;
-    }
-
-    public void setFgPlugins(String[] fgPlugins) {
-        this.fgPlugins = fgPlugins;
-    }
+    private String oracleSequence;//如果数据库是oracle，指定的序列
 }

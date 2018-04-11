@@ -40,7 +40,40 @@
                         <label class="col-sm-3 control-label">需要去除的表前缀：</label>
                         <div class="col-sm-8">
                             <input id="needRemovePre" name="needRemovePre" class="form-control"
-                                   type="text" th:value="${generator.needRemovePre}">
+                               type="text" th:value="${generator.needRemovePre}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" >sequence name：</label>
+                        <div class="col-sm-8">
+                            <input id="oracleSequence" name="oracleSequence" class="form-control"
+                                   type="text" th:value="${generator.oracleSequence}" placeholder="如果数据库是oracle，请指定sequence">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">模糊查询：</label>
+                        <div class="col-sm-8">
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.fuzzyLookup}" type="radio" name="fuzzyLookup" value="true" />
+                                是
+                            </label>
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.fuzzyLookup}" type="radio" name="fuzzyLookup" value="false" />
+                                否
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">批量删除：</label>
+                        <div class="col-sm-8">
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.batchRemove}" type="radio" name="batchRemove" value="true" />
+                                是
+                            </label>
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.batchRemove}" type="radio" name="batchRemove" value="false" />
+                                否
+                            </label>
                         </div>
                     </div>
                     <div class="form-group">
@@ -65,32 +98,6 @@
                                 th:field="*{generator.sidePagination}" type="radio" name="sidePagination" value="client" />
                                  Client
                         </label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">模糊查询：</label>
-                        <div class="col-sm-8">
-                            <label class="radio-inline"> <input
-                                    th:field="*{generator.fuzzyLookup}" type="radio" name="fuzzyLookup" value="true" />
-                                是
-                            </label>
-                            <label class="radio-inline"> <input
-                                th:field="*{generator.fuzzyLookup}" type="radio" name="fuzzyLookup" value="false" />
-                                 否
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">批量删除：</label>
-                        <div class="col-sm-8">
-                            <label class="radio-inline"> <input
-                                    th:field="*{generator.batchRemove}" type="radio" name="batchRemove" value="true" />
-                                是
-                            </label>
-                            <label class="radio-inline"> <input
-                                th:field="*{generator.batchRemove}" type="radio" name="batchRemove" value="false" />
-                                 否
-                            </label>
                         </div>
                     </div>
                     <div class="form-group">

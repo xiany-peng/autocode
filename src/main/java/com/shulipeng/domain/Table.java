@@ -1,5 +1,7 @@
 package com.shulipeng.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -11,6 +13,8 @@ import java.util.List;
  * @author pengxianyang
  * @date 2018/3/25
  */
+@Setter
+@Getter
 public class Table {
 
     //表名
@@ -32,61 +36,5 @@ public class Table {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Column getPk() {
-        return pk;
-    }
-
-    public void setPk(Column pk) {
-        this.pk = pk;
-    }
-
-    public List<Column> getColumns() {
-        return columns;
-    }
-
-    public void setColumns(List<Column> columns) {
-        this.columns = columns;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    public String getClassNameSmall() {
-        return classNameSmall;
-    }
-
-    public void setClassNameSmall(String classNameSmall) {
-        this.classNameSmall = classNameSmall;
     }
 }
