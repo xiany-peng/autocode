@@ -16,7 +16,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label ">模块名：</label>
+                        <label class="col-sm-3 control-label ">模块：</label>
                         <div class="col-sm-8">
                             <input id="module" name="module" class="form-control" type="text"
                                    th:value="${generator.module}" placeholder="默认是类名" >
@@ -37,10 +37,10 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">需要去除的表前缀：</label>
+                        <label class="col-sm-3 control-label">移除前缀：</label>
                         <div class="col-sm-8">
                             <input id="needRemovePre" name="needRemovePre" class="form-control"
-                               type="text" th:value="${generator.needRemovePre}">
+                               type="text" th:value="${generator.needRemovePre}" placeholder="需要移除的表前缀">
                         </div>
                     </div>
                     <div class="form-group">
@@ -67,11 +67,24 @@
                         <label class="col-sm-3 control-label">批量删除：</label>
                         <div class="col-sm-8">
                             <label class="radio-inline"> <input
-                                    th:field="*{generator.batchRemove}" type="radio" name="batchRemove" value="true" />
+                                    th:field="*{generator.batchDelete}" type="radio" name="batchDelete" value="true" />
                                 是
                             </label>
                             <label class="radio-inline"> <input
-                                    th:field="*{generator.batchRemove}" type="radio" name="batchRemove" value="false" />
+                                    th:field="*{generator.batchDelete}" type="radio" name="batchDelete" value="false" />
+                                否
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">表格导出：</label>
+                        <div class="col-sm-8">
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.export}" type="radio" name="export" value="true" />
+                                是
+                            </label>
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.export}" type="radio" name="export" value="false" />
                                 否
                             </label>
                         </div>
@@ -101,7 +114,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">前台所需插件：</label>
+                        <label class="col-sm-3 control-label">前台插件：</label>
                         <div class="col-sm-8">
                             <label th:each="fgPlugin:${fgAllPlugins}" class="checkbox-inline">
                                 <input name="fgPlugins[]" type="checkbox" th:value="${fgPlugin}"

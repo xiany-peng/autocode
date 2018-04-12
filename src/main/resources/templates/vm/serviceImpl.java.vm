@@ -41,7 +41,7 @@ public class ${className}ServiceImpl implements ${className}Service {
     }
 #end
 
-#if($batchRemove)
+#if($batchDelete)
     @Override
     public int batchDelete(${pk.attrType}[] ${pk.attrNameSmall}s){
         return ${classNameSmall}Mapper.batchDelete(${pk.attrNameSmall}s);
@@ -63,27 +63,30 @@ public class ${className}ServiceImpl implements ${className}Service {
         return ${classNameSmall}Mapper.list(${classNameSmall});
     }
 
-#if($fuzzyLookup)
-    @Override
-    public List<${className}> listByFuzzy(${className} ${classNameSmall}){
-        return ${classNameSmall}Mapper.listByFuzzy(${classNameSmall});
-    }
-#end
-
 #if($sidePagination == "server")
     @Override
     public Page list(${className} ${classNameSmall}, Page page){
         PageHelper.startPage(page.getPageNumber(), page.getPageSize());
 #if($fuzzyLookup)
-        List<${className}> list = this.listByFuzzy(${classNameSmall});
+        List<${className}> list = ${classNameSmall}Mapper.listByFuzzy(${classNameSmall});
 #else
-        List<${className}> list = this.list(${classNameSmall});
+        List<${className}> list = ${classNameSmall}Mapper.list(${classNameSmall});
 #end
         PageInfo<${className}> pageInfo = new PageInfo<${className}>(list);
         page.setTotal(String.valueOf(pageInfo.getTotal()));
         page.setRows(pageInfo.getList());
         return page;
     }
+
+#else
+#if($fuzzyLookup)
+    @Override
+    public List<${className}> listByFuzzy(${className} ${classNameSmall}){
+        return ${classNameSmall}Mapper.listByFuzzy(${classNameSmall});
+    }
 #end
+#end
+
+
 
 }

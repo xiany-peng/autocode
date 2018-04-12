@@ -8,7 +8,7 @@
         insert into ${tableName}
         (
 #foreach($column in $columns)
-#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
+#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')##除了主键的其它列
           `$column.columnName`#if($velocityCount != $columns.size()),#end
 
 #end
@@ -17,9 +17,18 @@
         values
         (
 #foreach($column in $columns)
-#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')
-#if($column.columnName == 'create_time' || $column.columnName == 'create_date' || $column.columnName == 'update_time' || $column.columnName == 'update_date')
-          now()#if($velocityCount != $columns.size()),#end
+#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')##除了主键的其它列
+#if($column.attrNameSmall == 'createTime' || $column.attrNameSmall == 'createDate' || $column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##创建日期，更新日期单独处理
+           now()#if($velocityCount != $columns.size()),#end
+#elseif($column.isDateType == 1)##日期单独处理
+       <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">
+           #{$column.attrNameSmall}#if($velocityCount != $columns.size()),#end
+
+       </if>
+       <if test="$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">
+           null#if($velocityCount != $columns.size()),#end
+
+       </if>
 #else
           #{$column.attrNameSmall}#if($velocityCount != $columns.size()),#end
 #end
@@ -43,9 +52,9 @@
     </delete>
 #end
 
-#if($batchRemove)
+#if($batchDelete)
     <!-- 批量删除 -->
-    <delete id="batchRemove" >
+    <delete id="batchDelete" >
 #if($isLogicDelete)
         update ${tableName} set is_delete = 1
 #else
@@ -63,9 +72,12 @@
         update ${tableName}
         <set>
 #foreach($column in $columns)
-#if($column.columnName != $pk.columnName)
-#if($column.columnName == 'update_time' || $column.columnName == 'update_date')
+#if($column.columnName != $pk.columnName)##除了主键的其它列
+#if($column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##更新日期，更新时间单独处理
          $column.columnName` = now(),
+#elseif($column.isDateType == 1)
+        <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">`$column.columnName` = #{$column.attrNameSmall},</if>
+        <if test="$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">`$column.columnName` = null,</if>
 #else
          <if test="$column.attrNameSmall != null">`$column.columnName` = #{$column.attrNameSmall},</if>
 #end
@@ -79,7 +91,7 @@
     <select id="get" resultType="${package}.entity.${module}.${className}">
         select
 #foreach($column in $columns)
-#if($column.attrType == "Date")
+#if($column.isDateType == 1)
             date_format(t.`${column.columnName}`,'%Y-%m-%d %H:%i:%s') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
 #else
             t.`${column.columnName}` $column.attrNameSmall #if($velocityCount != $columns.size()),#end
@@ -94,7 +106,7 @@
     <select id="list" resultType="${package}.entity.${module}.${className}">
         select
 #foreach($column in $columns)
-#if($column.attrType == "Date")
+#if($column.isDateType == 1)
             date_format(t.`${column.columnName}`,'%Y-%m-%d %H:%i:%s') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
 #else
             t.`${column.columnName}` $column.attrNameSmall#if($velocityCount != $columns.size()),#end
@@ -109,6 +121,7 @@
 #foreach($column in $columns)
         <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">and t.${column.columnName} = #{$column.attrNameSmall}</if>
 #end
+        order by t.${pk.attrNameSmall} desc
     </select>
 
 #if($fuzzyLookup)
@@ -116,7 +129,7 @@
     <select id="listByFuzzy" resultType="${package}.entity.${module}.${className}">
         select
 #foreach($column in $columns)
-#if($column.attrType == "Date")
+#if($column.isDateType == 1)
             date_format(t.`${column.columnName}`,'%Y-%m-%d %H:%i:%s') $column.attrNameSmall #if($velocityCount != $columns.size()),#end
 #else
             t.`${column.columnName}` $column.attrNameSmall#if($velocityCount != $columns.size()),#end
@@ -131,6 +144,7 @@
 #foreach($column in $columns)
         <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">and t.${column.columnName} #if($column.attrType == "String")like concat('%',#{$column.attrNameSmall},'%')#else= #{$column.attrNameSmall}#end </if>
 #end
+        order by t.${pk.attrNameSmall} desc
     </select>
 #end
 </mapper>

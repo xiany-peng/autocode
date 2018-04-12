@@ -19,8 +19,10 @@ import java.math.BigDecimal;
 public class ${className} {
 
 #foreach($column in $columns)
-    //$column.comment
-    private $column.attrType $column.attrNameSmall;
+    /**
+     * $column.comment
+     */
+    private #if($column.attrType == "Date")String#else$column.attrType#end $column.attrNameSmall;
 
 #end
 

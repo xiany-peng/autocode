@@ -64,7 +64,6 @@ public class GenUtils {
             if("is_delete".equalsIgnoreCase(column.getColumnName()) && "Integer".equals(column.getAttrType())){
                 vcContext.put("isLogicDelete",true);
             }
-
         }
         //如果没有主键，则设第一个为主键
         if(table.getPk() == null){
@@ -121,11 +120,18 @@ public class GenUtils {
         context.put("email", config.getString("email"));
         context.put("oracleSequence", config.getString("oracleSequence"));
         context.put("datetime", new DateTime().toString("yyyy/MM/dd HH:mm:ss"));
-        context.put("batchRemove", config.getBoolean("batchRemove",true));//是否批量删除
-        context.put("fuzzyLookup", config.getBoolean("fuzzyLookup",false));//是否需要模糊查询
-        context.put("sidePagination", config.getString("sidePagination","server"));//分页方式
-        context.put("fgPlugins", config.getStringArray("fgPlugins"));//前端需要插件
-        context.put("fgPluginAddr", getPluginAddr());//前端所有插件地址
+        //是否批量删除
+        context.put("batchDelete", config.getBoolean("batchDelete",true));
+        //是否需要导出
+        context.put("export", config.getBoolean("export",false));
+        //是否需要模糊查询
+        context.put("fuzzyLookup", config.getBoolean("fuzzyLookup",false));
+        //分页方式
+        context.put("sidePagination", config.getString("sidePagination","server"));
+        //前端需要插件
+        context.put("fgPlugins", config.getStringArray("fgPlugins"));
+        //前端所有插件地址
+        context.put("fgPluginAddr", getPluginAddr());
         context.put("module", getModuleName(config,table));
     }
 
@@ -163,7 +169,7 @@ public class GenUtils {
      */
     private static void fillTableClassAttr(Table table, String needRemovePre) {
         String className = table.getTableName();
-        if(StringUtils.isNoneBlank(needRemovePre) && className.substring(0,needRemovePre.length()).equals(needRemovePre)){
+        if(StringUtils.isNoneBlank(needRemovePre) && className.substring(0,needRemovePre.length()).equalsIgnoreCase(needRemovePre)){
             className = className.substring(needRemovePre.length()-1,className.length());
         }
 
@@ -214,8 +220,8 @@ public class GenUtils {
         }
         if(Constant.FG_FILE_TYPE_JSP.equals(fgFileType)){
             templates.add("templates/vm/list.jsp.vm");
-            templates.add("templates/vm/%s/edit.jsp.vm");
-            templates.add("templates/vm/%s/add.jsp.vm");
+            templates.add("templates/vm/edit.jsp.vm");
+            templates.add("templates/vm/add.jsp.vm");
         }
         return templates;
     }
@@ -261,6 +267,10 @@ public class GenUtils {
         if(Constant.FG_FILE_TYPE_JSP.equals(fgFileType)){
             //mapper
             if(template.contains("mapperMysql.xml.vm")){
+                return basePath +"mapper" + File.separator + module + File.separator + className + "Mapper.xml";
+            }
+            //mapper
+            if(template.contains("mapperOracle.xml.vm")){
                 return basePath +"mapper" + File.separator + module + File.separator + className + "Mapper.xml";
             }
             //list page

@@ -2,7 +2,7 @@ package ${package}.service.${module};
 
 import ${package}.entity.${module}.${className};
 #if($sidePagination == "server")
-import ${package}.utils.Page;
+import ${package}.common.Page;
 #end
 import java.util.List;
 
@@ -31,13 +31,13 @@ public interface ${className}Service {
 #else
     /**
      * 物理删除
-     * @param ${classNameSmall}
+     * @param $pk.attrNameSmall
      * @return
      */
     int delete($pk.attrType $pk.attrNameSmall);
 #end
 
-#if($batchRemove)
+#if($batchDelete)
     /**
      * 批量删除
      * @param ${pk.attrNameSmall}s

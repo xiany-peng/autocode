@@ -17,20 +17,39 @@ import java.util.List;
 @Getter
 public class Table {
 
-    //表名
+    /**
+     * 表名
+     */
     private String tableName;
-    //注释
+
+    /**
+     * 注释
+     */
     private String comment;
-    //主键
+
+    /**
+     * 主键
+     */
     private Column pk;
-    //所有列
+
+    /**
+     * 所有列
+     */
     private List<Column> columns;
-    //创建时间
+
+    /**
+     * 创建时间
+     */
     private Date createTime;
 
-    //类名
+    /**
+     * 类名
+     */
     private String className;
-    //类名 首字母是小写的
+
+    /**
+     * 类名 首字母是小写的
+     */
     private String classNameSmall;
 
     @Override

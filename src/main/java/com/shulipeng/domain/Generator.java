@@ -2,6 +2,8 @@ package com.shulipeng.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 
 /**
@@ -14,25 +16,68 @@ import lombok.Setter;
 @Getter
 public class Generator {
 
-    private String packageName;//包名
+    /**
+     * 包名
+     */
+    private String packageName;
 
-    private String module;//模块 用于设置文件夹名称 默认是类名
+    /**
+     * 模块 用于设置文件夹名称 默认是类名
+     */
+    private String module;
 
-    private String author;//作者
+    /**
+     * 作者
+     */
+    private String author;
 
-    private String company;//公司
+    /**
+     * 公司
+     */
+    private String company;
 
-    private String needRemovePre;//需要去除的表前缀
+    /**
+     * 需要去除的表前缀
+     */
+    private String needRemovePre;
 
-    private String fgFileType;//前台文件类型 可分为 html 和 jsp
+    /**
+     * 前台文件类型 可分为 html 和 jsp
+     */
+    private String fgFileType;
 
-    private String sidePagination;//前台分页还是后台分页 server client
+    /**
+     * 前台分页还是后台分页 server client
+     */
+    private String sidePagination;
 
-    private Boolean batchRemove;//是否需要批量删除
+    /**
+     * 是否需要批量删除
+     */
+    private Boolean batchDelete;
 
-    private Boolean fuzzyLookup;//模糊查询
+    /**
+     * 模糊查询
+     */
+    private Boolean fuzzyLookup;
 
-    private String[] fgPlugins;//前端所需插件
+    /**
+     * 导出
+     */
+    private Boolean export;
 
-    private String oracleSequence;//如果数据库是oracle，指定的序列
+    /**
+     * 前端所需插件
+     */
+    private String[] fgPlugins;
+
+    /**
+     * 如果数据库是oracle，指定的序列
+     */
+    private String oracleSequence;
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
 }

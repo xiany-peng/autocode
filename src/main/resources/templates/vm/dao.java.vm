@@ -29,13 +29,13 @@ public interface ${className}Mapper {
 #else
     /**
      * 物理删除
-     * @param ${classNameSmall}
+     * @param $pk.attrNameSmall
      * @return
      */
     int delete($pk.attrType $pk.attrNameSmall);
 #end
 
-#if($batchRemove)
+#if($batchDelete)
     /**
      * 批量删除
      * @param ${pk.attrNameSmall}s

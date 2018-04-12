@@ -32,7 +32,10 @@
         `data_type` dataType,
         `column_comment` comment,
         `column_key` columnKey,
-        `extra`
+        `extra`,
+        case when (`data_type` = 'date' or `data_type` = 'datetime' or `data_type` = 'timestamp') then 1
+             else 0
+        end isDateType
         from information_schema.columns
         where table_name = #{tableName}
         and table_schema = (select database())

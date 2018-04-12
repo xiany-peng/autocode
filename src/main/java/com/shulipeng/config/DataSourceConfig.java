@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * @author pengxianyang
@@ -23,7 +24,9 @@ public class DataSourceConfig {
 
     private static Logger logger = LoggerFactory.getLogger(DataSourceConfig.class);
 
-    //数据库类型
+    /**
+     * 数据库类型
+     */
     private String dbType;
 
     @Bean(name = "dataSource")

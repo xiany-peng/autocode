@@ -3,7 +3,11 @@ package com.shulipeng.utils;
 import java.util.List;
 
 public class Page {
-    private int total;//总条数
+
+    /**
+     * 总条数
+     */
+    private int total;
     @SuppressWarnings("rawtypes")
     private List rows;
     private int pageNumber;

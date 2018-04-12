@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class AutocodeConfig {
 
-    //数据库类型
+    /**
+     * 数据库类型
+     */
     private String dbType;
 
     public String getDbType() {

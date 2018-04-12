@@ -2,6 +2,8 @@ package com.shulipeng.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * @author pengxianyang
@@ -35,5 +37,12 @@ public class PluginAddr {
     private String hplusPrefix;
 
     private String fontAwesomePrefix;
+
+    private String tableExportPrefix;
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
 
 }

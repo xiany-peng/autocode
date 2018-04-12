@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <%
     String path = request.getContextPath();
     String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
@@ -27,7 +28,7 @@
     <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.select2Prefix}/css/select2.min.css">
     <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.select2Prefix}/css/select2-bootstrap.min.css">
 #elseif($plugin == 'uploadfive')
-    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.uploadfivePrefix}/uploadfive.css">
+    <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.uploadfivePrefix}/uploadifive.css">
 #elseif($plugin == 'ztree')
     <link rel="stylesheet" href="<%=basePath %>${fgPluginAddr.ztreePrefix}/css/zTreeStyle/zTreeStyle.css">
 #elseif($plugin == 'hplus')
@@ -37,44 +38,66 @@
 #end
 </head>
 <body class="gray-bg">
-<div class="wrapper wrapper-content animated fadeInRight">
-			<div class="row">
-		    <div class="col-md-12 col-sm-12">
-			  	<div class="ibox float-e-margins">
-			  		<div class="ibox-title ibox-title-blue">
-			  			<h5><i class="fa fa-file-text"></i>&nbsp;${comment}</h5>
+    <div class="wrapper wrapper-content ">
+        <div class="col-sm-12">
+            <div class="ibox">
+			  	<div class="ibox-body">
+			  	    <div id="exampleToolbar">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input id="query_param" type="text" class="table-tool-btn form-control"
+                                           placeholder="查询参数"/>
+                                </div>
+                                <shiro:hasPermission name="${module}:${classNameSmall}:add">
+                                    <button type="button" onclick="add()" class="btn btn-sm btn-primary" data-toggle="tooltip" title="添加">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;添加
+                                    </button>
+                                </shiro:hasPermission>
+#if($batchDelete)
+                                <shiro:hasPermission name="${module}:${classNameSmall}:batchDelete">
+                                    <button type="button" onclick="batchDelete()" class="btn btn-sm btn-danger"  data-toggle="tooltip" title="批量删除" >
+                                        <i class="glyphicon glyphicon-export"></i>&nbsp;批量删除
+                                    </button>
+                                </shiro:hasPermission>
+#end
+#if($export)
+                                <shiro:hasPermission name="${module}:${classNameSmall}:export">
+                                    <button type="button" onclick="exportTable()" class="btn btn-sm btn-success"  data-toggle="tooltip" title="导出" >
+                                        <i class="glyphicon glyphicon-export"></i>&nbsp;导出
+                                    </button>
+                                </shiro:hasPermission>
+#end
+                                <button type="button" onclick="reload()" class="btn btn-sm btn-success " data-toggle="tooltip" title="刷新">
+                                    <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;刷新
+                                </button>
+                            </div>
+                        </div>
 			  		</div>
-			  		<div class="ibox-content">
-			  		   <div class="btn-group table-tool">
-	                        <input id="query_param" type="text" class="table-tool-btn"
-	                          placeholder="查询参数"/>
-	                    </div>
-	                    <div class="btn-group table-tool" id="table0-toolbar" role="group">
-	                        <button type="button" onclick="add()" class="btn btn-outline btn-success btn-add" data-toggle="tooltip" title="添加">
-	                            <i class="fa fa-plus" aria-hidden="true"></i>
-	                        </button>
-	                        <button type="button" onclick="edit()" class="btn btn-outline btn-success btn-edit" data-toggle="tooltip" title="修改">
-	                            <i class="fa fa-edit" aria-hidden="true"></i>
-	                        </button>
-	                        <button type="button" onclick="remove()"
-	                                class="btn btn-outline btn-success btn-delete" data-toggle="tooltip" title="删除">
-	                            <i class="fa fa-trash" aria-hidden="true"></i>
-	                        </button>
-	                        <button type="button" onclick="reload()" class="btn btn-outline btn-success btn-refresh" data-toggle="tooltip" title="刷新">
-	                            <i class="fa fa-refresh" aria-hidden="true"></i>
-	                        </button>
-	                   </div>
-		  			  <table id="exampleTable" data-classes="table table-hover table-condensed">
-                         <thead>
-                             <tr>
-                             </tr>
-                         </thead>
-                     </table>
-			  		</div>
+			  		<table id="exampleTable" data-classes="table table-hover table-condensed">
+                        <thead>
+                            <tr>
+                            </tr>
+                        </thead>
+                    </table>
 			  	</div>
 			</div>
 		</div>
 </div>
+<script type="text/javascript">
+    var p_delete = 'hidden';
+    var p_edit = 'hidden';
+</script>
+<shiro:hasPermission name="${module}:${classNameSmall}:delete">
+<script type="text/javascript">
+    p_delete = '';
+</script>
+</shiro:hasPermission>
+<shiro:hasPermission name="${module}:${classNameSmall}:edit">
+<script type="text/javascript">
+    p_edit = '';
+</script>
+</shiro:hasPermission>
 
 #foreach($plugin in $fgPlugins)
 #if($plugin == 'jquery')
@@ -82,8 +105,8 @@
 #elseif($plugin == 'bootstrap')
     <script src="<%=basePath%>${fgPluginAddr.bootstrapPrefix}/js/bootstrap.min.js"></script>
 #elseif($plugin == 'bootstrapTable')
-    <script src="<%=basePath%>${fgPluginAddr.bootstrapPrefix}/bootstrap-table.min.js"></script>
-    <script src="<%=basePath%>${fgPluginAddr.bootstrapPrefix}/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="<%=basePath%>${fgPluginAddr.bootstraptablePrefix}/bootstrap-table.min.js"></script>
+    <script src="<%=basePath%>${fgPluginAddr.bootstraptablePrefix}/locale/bootstrap-table-zh-CN.min.js"></script>
 #elseif($plugin == 'bootstrapValidator')
     <script src="<%=basePath%>${fgPluginAddr.bootstrapValidatorPrefix}/js/bootstrapValidator.js"></script>
     <script src="<%=basePath%>${fgPluginAddr.bootstrapValidatorPrefix}/js/language/zh_CN.js"></script>
@@ -97,8 +120,11 @@
 #elseif($plugin == 'uploadfive')
     <script src="<%=basePath%>${fgPluginAddr.uploadfivePrefix}/jquery.uploadifive.js"></script>
 #elseif($plugin == 'ztree')
-    <script src="<%=basePath%>${fgPluginAddr.uploadfivePrefix}/js/jquery.ztree.core.js"></script>
+    <script src="<%=basePath%>${fgPluginAddr.ztreePrefix}/js/jquery.ztree.core.js"></script>
 #end
+#end
+#if($export)
+    <script src="<%=basePath%>${fgPluginAddr.tableExportPrefix}/tableExport.js"></script>
 #end
 
     <!-- 自定义js -->
@@ -118,7 +144,6 @@
                             striped : true,
                             dataType : "json",
                             pagination : true,
-                            singleSelect : true,
                             clickToSelect : true,
                             pageSize : 10,
                             pageNumber : 1,
@@ -137,9 +162,13 @@
 #end
                                 };
                             },
+                            onDblClickRow : function(row, $element, field){
+								view(row.${pk.attrNameSmall});
+							},
                             columns : [
                                     {
-                                        radio : true
+                                        field : 'idx',
+                                        checkbox : true
                                     },
 #foreach($column in $columns)
                                     {
@@ -149,17 +178,33 @@
 #end
                                     {
                                         title : '操作',
-                                        field : 'id',
                                         align : 'center',
-                                        formatter : function(value, row, index) {
+                                        visible : isShowOperation(),
+                                        formatter:function(value,row,index){
+                                            return [
+                                                '<a class="btn btn-sm btn-info '+p_edit+'" href="#" title="编辑" onclick="edit('+row.${pk.attrNameSmall}+')">',
+                                                     '<i class="glyphicon glyphicon-edit"></i>',
+                                                '</a>&nbsp;&nbsp;',
+                                                '<a class="btn btn-sm btn-warning '+p_delete+'" href="#" title="删除" onclick="remove('+row.${pk.attrNameSmall}+')">',
+                                                     '<i class="glyphicon glyphicon-remove"></i>',
+                                                '</a>&nbsp;&nbsp;'
+                                                ].join('');
                                         }
                                     } ]
                         })
         }
+
+        //是否有权限显示 '操作' 列
+        function isShowOperation(){
+            return (p_edit != 'hidden' || p_delete != 'hidden');
+        }
+
+        //刷新
         function reload(){
             $("#exampleTable").bootstrapTable('refresh');
         }
 
+        //增加
         function add() {
             layer.open({
                 type : 2,
@@ -167,52 +212,36 @@
                 maxmin : true,
                 shadeClose : false, // 点击遮罩关闭层
                 area : [ '800px', '520px' ],
-                content : prefix + '/edit.do'
+                content : prefix + '/add.do'
             });
         }
 
-        function edit() {
-            var rows = $('#exampleTable').bootstrapTable('getSelections');
-            if (rows.length == 0) {
-                layer.msg("请选择需要编辑的数据");
-                return;
-            }
-            var id = rows[0].${pk.attrNameSmall};
+        //编辑
+        function edit($pk.attrNameSmall) {
             layer.open({
                 type : 2,
                 title : '编辑',
                 maxmin : true,
                 shadeClose : false, // 点击遮罩关闭层
                 area : [ '800px', '520px' ],
-                content : prefix + '/edit.do?id=' + id
+                content : prefix + '/edit.do?$pk.attrNameSmall=' + $pk.attrNameSmall
             });
         }
 
-
-        function view() {
-            var rows = $('#exampleTable').bootstrapTable('getSelections');
-            if (rows.length == 0) {
-                layer.msg("请选择需要查看的记录");
-                return;
-            }
-            var id = rows[0].${pk.attrNameSmall};
+        //查看
+        function view($pk.attrNameSmall) {
             layer.open({
                 type : 2,
                 title : '查看',
                 maxmin : true,
                 shadeClose : false, // 点击遮罩关闭层
                 area : [ '800px', '520px' ],
-                content : prefix + '/view.do?id=' + id
+                content : prefix + '/view.do?$pk.attrNameSmall=' + $pk.attrNameSmall
             });
         }
 
-        function remove(id) {
-            var rows = $('#exampleTable').bootstrapTable('getSelections');
-            if (rows.length == 0) {
-                layer.msg("请选择需要删除的数据");
-                return;
-            }
-            var id = rows[0].${pk.attrNameSmall};
+        //删除
+        function remove($pk.attrNameSmall) {
             layer.confirm('确定要删除选中的记录？', {
                 btn : [ '确定', '取消' ]
             }, function() {
@@ -220,7 +249,7 @@
                     url : prefix+"/delete.do",
                     type : "post",
                     data : {
-                        '${pk.attrNameSmall}' : id
+                        '${pk.attrNameSmall}' : $pk.attrNameSmall
                     },
                     success : function(r) {
                         if (r.code==0) {
@@ -233,6 +262,56 @@
                 });
             })
         }
+#if($batchDelete)
+
+        //批量删除
+        function batchDelete() {
+
+            var rows = $('#exampleTable').bootstrapTable('getSelections');
+            if (rows.length == 0) {
+                layer.msg("请选择要删除的数据");
+                return;
+            }
+            layer.confirm("确认要删除选中的'" + rows.length + "'条数据吗?", {
+                btn : [ '确定', '取消' ]
+            }, function() {
+                var ids = new Array();
+                $.each(rows, function(i, row) {
+                    ids[i] = row['${pk.attrNameSmall}'];
+                });
+                $.ajax({
+                    type : 'POST',
+                    data : {
+                        "ids" : ids
+                    },
+                    url : prefix + '/batchDelete',
+                    success : function(r) {
+                        if (r.code == 0) {
+                            layer.msg(r.msg);
+                            reLoad();
+                        } else {
+                            layer.msg(r.msg);
+                        }
+                    }
+                });
+            }, function() {});
+        }
+#end
+
+#if(${export})
+        //导出表格
+        function exportTable() {
+            $('#exampleTable').bootstrapTable('refresh',{query:{
+                     offset:0,
+                     limit:999999
+            }});
+           $("#exampleTable").on('load-success.bs.table', function () {
+                $("#exampleTable").tableExport({type: 'excel',fileName:"${comment}",ignoreColumn:['idx']});
+                $("#exampleTable").off('load-success.bs.table');
+                $('#exampleTable').bootstrapTable('refresh');
+           });
+        }
+#end
 </script>
 </body>
 </html>

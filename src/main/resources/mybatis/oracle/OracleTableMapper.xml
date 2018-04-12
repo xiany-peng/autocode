@@ -31,7 +31,9 @@
     <select id="listColumns" resultType="com.shulipeng.domain.Column">
         select
           c.column_name columnName,
-          c.data_type dataType,
+          case when c.data_type like 'TIMESTAMP%' then 'timestamp'
+          else lower(c.data_type)
+          end dataType,
           m.comments as "comment",
           case when (select count(*)
                      from user_constraints i1, user_ind_columns i2
@@ -40,9 +42,13 @@
                      and i2.column_name = c.column_name
                      and i1.constraint_type = 'P')
            > 0  then 'PRI' else '' end columnKey,
-           '' extra
-          from all_tab_cols c,user_col_comments m
+           '' extra,
+          case when (c.data_type like 'TIMESTAMP%' or c.data_type = 'DATE' ) then 1
+          else 0
+          end isDateType
+          from user_tab_cols c,user_col_comments m
           where c.column_name = m.column_name
+          and c.table_name = m.table_name
           and c.table_name = #{tableName}
     </select>
 

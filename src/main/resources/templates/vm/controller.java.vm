@@ -1,6 +1,5 @@
 package ${package}.controller.${module};
 
-import java.util.Date;
 
 import ${package}.common.R;
 import ${package}.common.Page;
@@ -13,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 
 /**
@@ -28,7 +25,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 @RequestMapping("/${classNameSmall}")
 public class ${className}Controller {
 
-    private static final String prefix = "/${module}";
+    private static final String PREFIX = "/${module}";
 
     @Autowired
     ${className}Service ${classNameSmall}Service;
@@ -40,7 +37,7 @@ public class ${className}Controller {
     @RequestMapping(value = "", method={ RequestMethod.GET})
     @RequiresPermissions("${module}:${classNameSmall}:list")
     String to${className}Page(){
-        return prefix + "/${classNameSmall}List";
+        return PREFIX + "/${classNameSmall}List";
     }
 
 #if($sidePagination == "server")
@@ -81,14 +78,12 @@ public class ${className}Controller {
 
     /**
      * 进入新增页面
-     * @param model
-     * @param $pk.attrNameSmall
      * @return
      */
     @RequestMapping(value = "/add", method={ RequestMethod.GET})
     @RequiresPermissions("${module}:${classNameSmall}:add")
     String add(){
-        return prefix + "/${classNameSmall}Add";
+        return PREFIX + "/${classNameSmall}Add";
     }
 
     /**
@@ -125,7 +120,7 @@ public class ${className}Controller {
     String edit(Model model,$pk.attrType $pk.attrNameSmall){
         ${className} $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
         model.addAttribute("$classNameSmall", $classNameSmall);
-        return prefix + "/${classNameSmall}Edit";
+        return PREFIX + "/${classNameSmall}Edit";
     }
 
     /**
@@ -161,7 +156,7 @@ public class ${className}Controller {
         ${className} $classNameSmall = ${classNameSmall}Service.get($pk.attrNameSmall);
         model.addAttribute("$classNameSmall", $classNameSmall);
         model.addAttribute("isReadonly", 1);
-        return prefix + "/${classNameSmall}Edit";
+        return PREFIX + "/${classNameSmall}Edit";
     }
 
     /**
@@ -183,17 +178,17 @@ public class ${className}Controller {
         return R.error();
     }
 
-#if($batchRemove)
+#if($batchDelete)
     /**
      * 批量删除
      * @param ${pk.attrNameSmall}s
      * @return
      */
-    @PostMapping( "/batchRemove")
+    @RequestMapping(value = "/batchDelete", method={ RequestMethod.POST})
     @ResponseBody
-    @RequiresPermissions("${module}:${classNameSmall}:batchRemove")
+    @RequiresPermissions("${module}:${classNameSmall}:batchDelete")
     public R remove(@RequestParam("ids[]") ${pk.attrType}[] ${pk.attrNameSmall}s){
-            ${classNameSmall}Service.batchRemove(${pk.attrNameSmall}s);
+            ${classNameSmall}Service.batchDelete(${pk.attrNameSmall}s);
         return R.ok();
     }
 #end

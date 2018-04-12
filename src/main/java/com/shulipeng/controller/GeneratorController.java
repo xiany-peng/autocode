@@ -22,14 +22,14 @@ import java.util.List;
 @RequestMapping("/generator")
 public class GeneratorController {
 
-    private static final String prefix = "/generator";
+    private static final String PREFIX = "/generator";
 
     @Autowired
     GeneratorService generatorService;
 
     @GetMapping("")
     String generator(){
-        return prefix + "/generator";
+        return PREFIX + "/generator";
     }
 
     @PostMapping("/list")

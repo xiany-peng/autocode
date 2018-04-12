@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class ConfigController {
 
     private static  final Logger logger = LoggerFactory.getLogger(ConfigController.class);
-    private static final String prefix = "/config";
+    private static final String PREFIX = "/config";
 
     @Autowired
     DataSourceConfig dataSourceConfig;
@@ -45,7 +45,7 @@ public class ConfigController {
         } catch (ConfigurationException e) {
             logger.error("获取数据库配置文件失败："+e);
         }
-        return  prefix + "/db";
+        return  PREFIX + "/db";
     }
 
     /**
@@ -82,7 +82,7 @@ public class ConfigController {
         } catch (ConfigurationException e) {
             logger.error("获取前端地址配置文件失败：" + e);
         }
-        return  prefix + "/addr";
+        return  PREFIX + "/addr";
     }
 
 
@@ -122,7 +122,7 @@ public class ConfigController {
         } catch (ConfigurationException e) {
             logger.error("获取 生成配置 文件失败："+e);
         }
-        return  prefix + "/config";
+        return  PREFIX + "/config";
     }
 
     /**
