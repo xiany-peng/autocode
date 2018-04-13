@@ -21,6 +21,15 @@ public interface ${className}Service {
      */
     int insert(${className} ${classNameSmall});
 
+#if($batchInsert)
+    /**
+     * 批量插入
+     * @param ${classNameSmall}s
+     * @return
+     */
+    boolean batchInsert(List<${className}> ${classNameSmall}s);
+#end
+
 #if($isLogicDelete)
     /**
      * 逻辑删除（将is_delete 标记为置为 1）
@@ -43,7 +52,7 @@ public interface ${className}Service {
      * @param ${pk.attrNameSmall}s
      * @return
      */
-    int batchDelete(${pk.attrType}[] ${pk.attrNameSmall}s);
+    boolean batchDelete(${pk.attrType}[] ${pk.attrNameSmall}s);
 #end
 
     /**
@@ -52,6 +61,15 @@ public interface ${className}Service {
      * @return
      */
     int update(${className} ${classNameSmall});
+
+#if($batchUpdate)
+    /**
+     * 批量更新
+     * @param ${classNameSmall}s
+     * @return
+     */
+    boolean batchUpdate(List<${className}> ${classNameSmall}s);
+#end
 
     /**
      * 通过主键查询

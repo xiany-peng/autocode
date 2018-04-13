@@ -29,6 +29,16 @@ public class ${className}ServiceImpl implements ${className}Service {
         return ${classNameSmall}Mapper.insert(${classNameSmall});
     }
 
+#if($batchInsert)
+    @Override
+    public boolean batchInsert(List<${className}> ${classNameSmall}s) {
+        if(${classNameSmall}s.size() == 0){
+            return false;
+        }
+        return ${classNameSmall}Mapper.batchInsert(${classNameSmall}s) > 0;
+    }
+
+#end
 #if($isLogicDelete)
     @Override
     public int deleteLogic($pk.attrType $pk.attrNameSmall){
@@ -43,8 +53,11 @@ public class ${className}ServiceImpl implements ${className}Service {
 
 #if($batchDelete)
     @Override
-    public int batchDelete(${pk.attrType}[] ${pk.attrNameSmall}s){
-        return ${classNameSmall}Mapper.batchDelete(${pk.attrNameSmall}s);
+    public boolean batchDelete(${pk.attrType}[] ${pk.attrNameSmall}s){
+        if(${pk.attrNameSmall}s.length == 0){
+            return false;
+        }
+        return ${classNameSmall}Mapper.batchDelete(${pk.attrNameSmall}s) > 0;
     }
 #end
 
@@ -53,6 +66,16 @@ public class ${className}ServiceImpl implements ${className}Service {
         return ${classNameSmall}Mapper.update(${classNameSmall});
     }
 
+#if($batchUpdate)
+    @Override
+    public boolean batchUpdate(List<${className}> ${classNameSmall}s) {
+        if(${classNameSmall}s.size() == 0){
+            return false;
+        }
+        return ${classNameSmall}Mapper.batchUpdate(${classNameSmall}s) > 0 ;
+    }
+
+#end
     @Override
     public ${className} get($pk.attrType $pk.attrNameSmall){
         return ${classNameSmall}Mapper.get($pk.attrNameSmall);

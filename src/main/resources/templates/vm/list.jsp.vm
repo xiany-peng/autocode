@@ -57,7 +57,7 @@
 #if($batchDelete)
                                 <shiro:hasPermission name="${module}:${classNameSmall}:batchDelete">
                                     <button type="button" onclick="batchDelete()" class="btn btn-sm btn-danger"  data-toggle="tooltip" title="批量删除" >
-                                        <i class="glyphicon glyphicon-export"></i>&nbsp;批量删除
+                                        <i class="glyphicon glyphicon-trash"></i>&nbsp;批量删除
                                     </button>
                                 </shiro:hasPermission>
 #end
@@ -284,11 +284,11 @@
                     data : {
                         "ids" : ids
                     },
-                    url : prefix + '/batchDelete',
+                    url : prefix + '/batchDelete.do',
                     success : function(r) {
                         if (r.code == 0) {
                             layer.msg(r.msg);
-                            reLoad();
+                            reload();
                         } else {
                             layer.msg(r.msg);
                         }

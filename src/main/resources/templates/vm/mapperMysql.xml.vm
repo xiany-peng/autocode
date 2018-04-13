@@ -3,7 +3,7 @@
 
 <mapper namespace="${package}.dao.${module}.${className}Mapper">
 
-    <!-- 增加 -->
+    <!-- 插入 -->
     <insert id="insert" parameterType="${package}.entity.${module}.${className}" #if($pk.extra == 'auto_increment') useGeneratedKeys="true" keyProperty="$pk.attrNameSmall"#end >
         insert into ${tableName}
         (
@@ -21,22 +21,53 @@
 #if($column.attrNameSmall == 'createTime' || $column.attrNameSmall == 'createDate' || $column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##创建日期，更新日期单独处理
            now()#if($velocityCount != $columns.size()),#end
 #elseif($column.isDateType == 1)##日期单独处理
-       <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">
-           #{$column.attrNameSmall}#if($velocityCount != $columns.size()),#end
+       <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">#{$column.attrNameSmall,jdbcType=$column.jdbcType}#if($velocityCount != $columns.size()),#end</if>##
 
-       </if>
-       <if test="$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">
-           null#if($velocityCount != $columns.size()),#end
-
-       </if>
+       <if test="$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">null#if($velocityCount != $columns.size()),#end</if>##
 #else
-          #{$column.attrNameSmall}#if($velocityCount != $columns.size()),#end
+          #{$column.attrNameSmall,jdbcType=$column.jdbcType}#if($velocityCount != $columns.size()),#end
 #end
 
 #end
 #end
         )
     </insert>
+
+#if($batchInsert)
+    <!-- 批量插入 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into ${tableName}
+        (
+#foreach($column in $columns)
+#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')##除了主键的其它列
+        `$column.columnName`#if($velocityCount != $columns.size()),#end
+
+#end
+#end
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator="," >
+        (
+#foreach($column in $columns)
+#if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')##除了主键的其它列
+#if($column.attrNameSmall == 'createTime' || $column.attrNameSmall == 'createDate' || $column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##创建日期，更新日期单独处理
+            now()#if($velocityCount != $columns.size()),#end
+#elseif($column.isDateType == 1)##日期单独处理
+            <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">#{item.$column.attrNameSmall,jdbcType=$column.jdbcType}#if($velocityCount != $columns.size()),#end</if>##
+
+            <if test="$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">null#if($velocityCount != $columns.size()),#end</if>##
+#else
+            #{item.$column.attrNameSmall,jdbcType=$column.jdbcType}#if($velocityCount != $columns.size()),#end
+#end
+
+#end
+#end
+        )
+        </foreach>
+    </insert>
+
+#end
+
 
 #if($isLogicDelete)
     <!-- 逻辑删除 -->
@@ -61,8 +92,8 @@
         delete from ${tableName}
 #end
         where $pk.columnName in
-        <foreach collection="array" item="${pk.attrNameSmall}" open="(" separator="," close="(">
-            (#{$pk.attrNameSmall})
+        <foreach collection="array" item="${pk.attrNameSmall}" open="(" separator="," close=")">
+            #{$pk.attrNameSmall}
         </foreach>
     </delete>
 #end
@@ -74,12 +105,12 @@
 #foreach($column in $columns)
 #if($column.columnName != $pk.columnName)##除了主键的其它列
 #if($column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##更新日期，更新时间单独处理
-         $column.columnName` = now(),
+            $column.columnName` = now(),
 #elseif($column.isDateType == 1)
-        <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">`$column.columnName` = #{$column.attrNameSmall},</if>
-        <if test="$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">`$column.columnName` = null,</if>
+            <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">`$column.columnName` = #{$column.attrNameSmall,jdbcType=$column.jdbcType},</if>
+            <if test="$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">`$column.columnName` = null,</if>
 #else
-         <if test="$column.attrNameSmall != null">`$column.columnName` = #{$column.attrNameSmall},</if>
+            <if test="$column.attrNameSmall != null">`$column.columnName` = #{$column.attrNameSmall,jdbcType=$column.jdbcType},</if>
 #end
 #end
 #end
@@ -87,6 +118,31 @@
         where $pk.columnName = #{$pk.attrNameSmall}
     </update>
 
+#if($batchUpdate)
+    <!-- 批量更新 -->
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update ${tableName}
+            <set>
+#foreach($column in $columns)
+#if($column.columnName != $pk.columnName)##除了主键的其它列
+#if($column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##更新日期，更新时间单独处理
+            $column.columnName` = now(),
+#elseif($column.isDateType == 1)
+            <if test="item.$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">`$column.columnName` = #{item.$column.attrNameSmall,jdbcType=$column.jdbcType},</if>##
+
+            <if test="item.$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">`$column.columnName` = null,</if>##
+#else
+            <if test="item.$column.attrNameSmall != null">`$column.columnName` = #{item.$column.attrNameSmall,jdbcType=$column.jdbcType},</if>
+#end
+#end
+#end
+            </set>
+            where $pk.columnName = #{item.$pk.attrNameSmall}
+        </foreach>
+    </update>
+
+#end
     <!-- 通过主键ID查询 -->
     <select id="get" resultType="${package}.entity.${module}.${className}">
         select

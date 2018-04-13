@@ -64,6 +64,19 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-3 control-label">批量插入：</label>
+                        <div class="col-sm-8">
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.batchInsert}" type="radio" name="batchInsert" value="true" />
+                                是
+                            </label>
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.batchInsert}" type="radio" name="batchInsert" value="false" />
+                                否
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-3 control-label">批量删除：</label>
                         <div class="col-sm-8">
                             <label class="radio-inline"> <input
@@ -72,6 +85,19 @@
                             </label>
                             <label class="radio-inline"> <input
                                     th:field="*{generator.batchDelete}" type="radio" name="batchDelete" value="false" />
+                                否
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">批量更新：</label>
+                        <div class="col-sm-8">
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.batchUpdate}" type="radio" name="batchUpdate" value="true" />
+                                是
+                            </label>
+                            <label class="radio-inline"> <input
+                                    th:field="*{generator.batchUpdate}" type="radio" name="batchUpdate" value="false" />
                                 否
                             </label>
                         </div>

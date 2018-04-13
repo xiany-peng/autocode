@@ -5,10 +5,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -16,17 +13,21 @@ public class AutocodeApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		List<String> vector = new ArrayList<>(3);
-		vector.add("1");
-		vector.add("2");
-		vector.add("3");
-		vector.add("4");
-		vector.add("5");
-		vector.add("6");
-		Iterator<String> iterator = vector.iterator();
-		while (iterator.hasNext()){
-			System.out.println(iterator.next());
+		Random ran = new Random(100);
+		System.out.println(ran.nextInt(27) );
+	}
+
+	private static final String randomString(int i){
+		Random ran = new Random(i);
+		StringBuilder stringBuilder = new StringBuilder();
+		while (true){
+			int k = ran.nextInt(27);
+			if(k == 0){
+				break;
+			}
+			stringBuilder.append((char)('`'+k));
 		}
+		return stringBuilder.toString();
 	}
 
 }

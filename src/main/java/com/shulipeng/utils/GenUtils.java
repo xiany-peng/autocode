@@ -10,6 +10,8 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -30,6 +32,19 @@ import java.util.zip.ZipOutputStream;
 public class GenUtils {
 
     public static final String CONFIG_LOCATION = "generator.properties";
+
+    private static Map<String,String> jdbcTypeMap = new HashMap<>(16);
+
+    static {
+        jdbcTypeMap.put("Integer", JdbcType.INTEGER.toString());
+        jdbcTypeMap.put("Long", JdbcType.BIGINT.toString());
+        jdbcTypeMap.put("Float",JdbcType.FLOAT.toString());
+        jdbcTypeMap.put("Double",JdbcType.DOUBLE.toString());
+        jdbcTypeMap.put("String",JdbcType.VARCHAR.toString());
+        jdbcTypeMap.put("Date",JdbcType.DATE.toString());
+        jdbcTypeMap.put("BigDecimal",JdbcType.DECIMAL.toString());
+        jdbcTypeMap.put("Boolean",JdbcType.BIT.toString());
+    }
 
     /**
      * 生成代码
@@ -120,8 +135,10 @@ public class GenUtils {
         context.put("email", config.getString("email"));
         context.put("oracleSequence", config.getString("oracleSequence"));
         context.put("datetime", new DateTime().toString("yyyy/MM/dd HH:mm:ss"));
-        //是否批量删除
-        context.put("batchDelete", config.getBoolean("batchDelete",true));
+        //是否批量删除,批量插入，批量更新
+        context.put("batchDelete", config.getBoolean("batchDelete",false));
+        context.put("batchInsert", config.getBoolean("batchInsert",false));
+        context.put("batchUpdate", config.getBoolean("batchUpdate",false));
         //是否需要导出
         context.put("export", config.getBoolean("export",false));
         //是否需要模糊查询
@@ -189,7 +206,7 @@ public class GenUtils {
         String columnName = toJavaStyle(column.getColumnName());
         column.setAttrName(columnName);
         column.setAttrNameSmall(StringUtils.uncapitalize(columnName));
-
+        column.setJdbcType(jdbcTypeMap.get(column.getAttrType()));
     }
 
     /**

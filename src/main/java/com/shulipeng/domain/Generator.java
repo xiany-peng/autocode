@@ -57,6 +57,16 @@ public class Generator {
     private Boolean batchDelete;
 
     /**
+     * 是否需要批量插入
+     */
+    private Boolean batchInsert;
+
+    /**
+     * 是否需要批量更新
+     */
+    private Boolean batchUpdate;
+
+    /**
      * 模糊查询
      */
     private Boolean fuzzyLookup;
