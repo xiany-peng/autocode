@@ -17,7 +17,7 @@ public class IndexController {
      */
     @GetMapping("/index")
     String toIndex(){
-        return "/index";
+        return "index";
     }
 
     /**
@@ -26,6 +26,6 @@ public class IndexController {
      */
     @GetMapping("/main")
     String toMain(){
-        return "/main";
+        return "main";
     }
 }
