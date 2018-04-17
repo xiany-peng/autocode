@@ -173,7 +173,7 @@ public class GenUtils {
      */
     private static Configuration getConfig() {
         try {
-            return new PropertiesConfiguration("generator.properties");
+            return new PropertiesConfiguration(ResourceUtils.getResourceAddr("generator.properties"));
         } catch (ConfigurationException e) {
             throw new RuntimeException("获取配置文件失败:",e);
         }

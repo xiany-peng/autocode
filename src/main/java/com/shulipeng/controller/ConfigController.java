@@ -6,6 +6,7 @@ import com.shulipeng.domain.Db;
 import com.shulipeng.domain.Generator;
 import com.shulipeng.utils.BeanUtils;
 import com.shulipeng.utils.R;
+import com.shulipeng.utils.ResourceUtils;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class ConfigController {
 
     private static  final Logger logger = LoggerFactory.getLogger(ConfigController.class);
-    private static final String PREFIX = "/config";
+    private static final String PREFIX = "config";
 
     @Autowired
     DataSourceConfig dataSourceConfig;
@@ -39,7 +40,7 @@ public class ConfigController {
     @GetMapping("/db")
     String toDBPage(Model  model){
         try {
-            PropertiesConfiguration conf = new PropertiesConfiguration("db.properties");
+            PropertiesConfiguration conf = new PropertiesConfiguration(ResourceUtils.getResourceAddr("db.properties"));
             Db db = BeanUtils.propertyToBean(Db.class,conf);
             model.addAttribute("db",db);
         } catch (ConfigurationException e) {
@@ -57,7 +58,7 @@ public class ConfigController {
     @ResponseBody
     R changeDB(Db db){
         try {
-            PropertiesConfiguration conf = new PropertiesConfiguration("db.properties");
+            PropertiesConfiguration conf = new PropertiesConfiguration(ResourceUtils.getResourceAddr("db.properties"));
             BeanUtils.beanToProperty(db,conf);
             conf.save();
             dataSourceConfig.changeDataSource();
@@ -76,7 +77,7 @@ public class ConfigController {
     @GetMapping("/addr")
     String toPluginAddrPage(Model  model){
         try {
-            PropertiesConfiguration conf = new PropertiesConfiguration("addr.properties");
+            PropertiesConfiguration conf = new PropertiesConfiguration(ResourceUtils.getResourceAddr("addr.properties"));
             PluginAddr pluginAddr = BeanUtils.propertyToBean(PluginAddr.class,conf);
             model.addAttribute("addr", pluginAddr);
         } catch (ConfigurationException e) {
@@ -95,7 +96,8 @@ public class ConfigController {
     @ResponseBody
     R changePluginAddr(PluginAddr pluginAddr){
         try {
-            PropertiesConfiguration conf = new PropertiesConfiguration("addr.properties");
+
+            PropertiesConfiguration conf = new PropertiesConfiguration(ResourceUtils.getResourceAddr("addr.properties"));
             BeanUtils.beanToProperty(pluginAddr,conf);
             conf.save();
         } catch (ConfigurationException e) {
@@ -113,7 +115,7 @@ public class ConfigController {
     @GetMapping("/generator")
     String toGeneratorConfPage(Model  model){
         try {
-            PropertiesConfiguration conf = new PropertiesConfiguration("generator.properties");
+            PropertiesConfiguration conf = new PropertiesConfiguration(ResourceUtils.getResourceAddr("generator.properties"));
             Generator generator =  BeanUtils.propertyToBean(Generator.class,conf);
             model.addAttribute("generator",generator);
 
@@ -134,7 +136,7 @@ public class ConfigController {
     @ResponseBody
     R changeGenerator(@RequestBody Generator generator){
         try {
-            PropertiesConfiguration conf = new PropertiesConfiguration("generator.properties");
+            PropertiesConfiguration conf = new PropertiesConfiguration(ResourceUtils.getResourceAddr("generator.properties"));
             BeanUtils.beanToProperty(generator,conf);
             conf.save();
         } catch (ConfigurationException e) {
