@@ -1,5 +1,6 @@
 package com.shulipeng.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -20,6 +21,7 @@ import java.util.List;
  * @company QingDao Airlines
  * @description
  */
+@Slf4j
 public class ResourceUtils {
 
     public InputStream getResourceAsStream(String resourceName) {
@@ -67,7 +69,7 @@ public class ResourceUtils {
      * @param fileName
      * @return
      */
-    public static String getResourceAddr(String fileName){
+    public static URL getResourceAddr(String fileName){
         String fallback =  "file:./config/,file:./,classpath:/config/,classpath:/";
         List<String> list = Arrays.asList(StringUtils.trimArrayElements(StringUtils.commaDelimitedListToStringArray(fallback)));
         ResourceLoader resourceLoader = new DefaultResourceLoader();
@@ -75,7 +77,11 @@ public class ResourceUtils {
             String filePath = prefix + fileName;
             Resource resource = resourceLoader.getResource(filePath);
             if(resource != null && resource.exists()){
-                return resource.getFilename();
+                try {
+                    return resource.getURL();
+                } catch (IOException e) {
+                    return null;
+                }
             }
         }
 

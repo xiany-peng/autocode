@@ -18,10 +18,10 @@
         values
         (
 #foreach($column in $columns)
-#if($column.attrNameSmall == 'createTime' || $column.attrNameSmall == 'createDate' || $column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##创建日期，更新日期单独处理
+#if($column.attrNameSmall == 'createTime' || $column.attrNameSmall == 'updateTime' )##创建日期，更新日期单独处理
             sysdate#if($velocityCount != $columns.size()),#end
 #elseif($column.isDateType == 1)##日期单独处理
-            <if test = "$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">#{$column.attrNameSmall,jdbcType=$column.jdbcType}#if($velocityCount != $columns.size()), #end</if>##
+            <if test = "$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">to_date(#{$column.attrNameSmall,jdbcType=$column.jdbcType},'yyyy-mm-dd hh24:mi:ss')#if($velocityCount != $columns.size()), #end</if>##
 
             <if test = "$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">null#if($velocityCount != $columns.size()), #end</if>##
 #else
@@ -41,10 +41,10 @@
             select
 #foreach($column in $columns)
 #if($column.columnName != $pk.columnName)##除了主键的其它列
-#if($column.attrNameSmall == 'createTime' || $column.attrNameSmall == 'createDate' || $column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##创建日期，更新日期单独处理
+#if($column.attrNameSmall == 'createTime'  || $column.attrNameSmall == 'updateTime')##创建日期，更新日期单独处理
                 sysdate as "$column.attrNameSmall" #if($velocityCount != $columns.size()),#end
 #elseif($column.isDateType == 1)##日期单独处理
-                <if test = "$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">#{item.$column.attrNameSmall,jdbcType=$column.jdbcType} "$column.attrNameSmall"#if($velocityCount != $columns.size()), #end</if>##
+                <if test = "$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">to_date(#{item.$column.attrNameSmall,jdbcType=$column.jdbcType},'yyyy-mm-dd hh24:mi:ss') "$column.attrNameSmall"#if($velocityCount != $columns.size()), #end</if>##
 
                 <if test = "$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">null "$column.attrNameSmall"#if($velocityCount != $columns.size()), #end</if>##
 #else
@@ -94,10 +94,10 @@
         <set>
 #foreach($column in $columns)
 #if($column.columnName != $pk.columnName)##除了主键的其它列
-#if($column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##更新日期，更新时间单独处理
+#if($column.attrNameSmall == 'updateTime')##更新日期，更新时间单独处理
             $column.columnName = sysdate,
 #elseif($column.isDateType == 1)
-            <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">$column.columnName = #{$column.attrNameSmall,jdbcType=$column.jdbcType},</if>
+            <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">$column.columnName = to_date(#{$column.attrNameSmall,jdbcType=$column.jdbcType},'yyyy-mm-dd hh24:mi:ss'),</if>
             <if test="$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">$column.columnName = null,</if>
 #else
             <if test="$column.attrNameSmall != null">$column.columnName = #{$column.attrNameSmall,jdbcType=$column.jdbcType},</if>
@@ -116,10 +116,10 @@
             <set>
 #foreach($column in $columns)
 #if($column.columnName != $pk.columnName)##除了主键的其它列
-#if($column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##更新日期，更新时间单独处理
+#if($column.attrNameSmall == 'updateTime')##更新日期，更新时间单独处理
                 $column.columnName = sysdate,
 #elseif($column.isDateType == 1)
-                <if test="item.$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">$column.columnName = #{item.$column.attrNameSmall,jdbcType=$column.jdbcType},</if>
+                <if test="item.$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">$column.columnName = to_date(#{item.$column.attrNameSmall,jdbcType=$column.jdbcType},'yyyy-mm-dd hh24:mi:ss'),</if>
                 <if test="item.$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">$column.columnName = null,</if>
 #else
                 <if test="item.$column.attrNameSmall != null">$column.columnName = #{item.$column.attrNameSmall,jdbcType=$column.jdbcType},</if>

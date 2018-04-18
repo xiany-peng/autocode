@@ -15,7 +15,7 @@ public class IndexController {
      * 进入首页
      * @return
      */
-    @GetMapping("/index")
+    @GetMapping("/")
     String toIndex(){
         return "index";
     }

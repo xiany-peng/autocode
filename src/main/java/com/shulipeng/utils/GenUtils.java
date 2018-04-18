@@ -31,8 +31,6 @@ import java.util.zip.ZipOutputStream;
  */
 public class GenUtils {
 
-    public static final String CONFIG_LOCATION = "generator.properties";
-
     private static Map<String,String> jdbcTypeMap = new HashMap<>(16);
 
     static {
@@ -161,7 +159,7 @@ public class GenUtils {
     private static String getModuleName(Configuration config, Table table) {
         String module = config.getString("module");
         if(StringUtils.isBlank(module) && table != null){
-            module = table.getClassNameSmall().toLowerCase();
+            module = table.getClassNameSmall();
         }
         return module;
     }

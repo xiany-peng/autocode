@@ -18,10 +18,10 @@
         (
 #foreach($column in $columns)
 #if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')##除了主键的其它列
-#if($column.attrNameSmall == 'createTime' || $column.attrNameSmall == 'createDate' || $column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##创建日期，更新日期单独处理
+#if($column.attrNameSmall == 'createTime' || $column.attrNameSmall == 'updateTime')##创建日期，更新日期单独处理
            now()#if($velocityCount != $columns.size()),#end
 #elseif($column.isDateType == 1)##日期单独处理
-       <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">#{$column.attrNameSmall,jdbcType=$column.jdbcType}#if($velocityCount != $columns.size()),#end</if>##
+       <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">date_format(#{$column.attrNameSmall,jdbcType=$column.jdbcType},'%Y-%m-%d %H:%i:%s')#if($velocityCount != $columns.size()),#end</if>##
 
        <if test="$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">null#if($velocityCount != $columns.size()),#end</if>##
 #else
@@ -50,10 +50,10 @@
         (
 #foreach($column in $columns)
 #if($column.columnName != $pk.columnName || $pk.extra != 'auto_increment')##除了主键的其它列
-#if($column.attrNameSmall == 'createTime' || $column.attrNameSmall == 'createDate' || $column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##创建日期，更新日期单独处理
+#if($column.attrNameSmall == 'createTime'  || $column.attrNameSmall == 'updateTime')##创建日期，更新日期单独处理
             now()#if($velocityCount != $columns.size()),#end
 #elseif($column.isDateType == 1)##日期单独处理
-            <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">#{item.$column.attrNameSmall,jdbcType=$column.jdbcType}#if($velocityCount != $columns.size()),#end</if>##
+            <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">date_format(#{item.$column.attrNameSmall,jdbcType=$column.jdbcType},'%Y-%m-%d %H:%i:%s')#if($velocityCount != $columns.size()),#end</if>##
 
             <if test="$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">null#if($velocityCount != $columns.size()),#end</if>##
 #else
@@ -104,10 +104,10 @@
         <set>
 #foreach($column in $columns)
 #if($column.columnName != $pk.columnName)##除了主键的其它列
-#if($column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##更新日期，更新时间单独处理
+#if($column.attrNameSmall == 'updateTime' )##更新日期，更新时间单独处理
             $column.columnName` = now(),
 #elseif($column.isDateType == 1)
-            <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">`$column.columnName` = #{$column.attrNameSmall,jdbcType=$column.jdbcType},</if>
+            <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">`$column.columnName` = date_format(#{$column.attrNameSmall,jdbcType=$column.jdbcType},'%Y-%m-%d %H:%i:%s'),</if>
             <if test="$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">`$column.columnName` = null,</if>
 #else
             <if test="$column.attrNameSmall != null">`$column.columnName` = #{$column.attrNameSmall,jdbcType=$column.jdbcType},</if>
@@ -129,7 +129,7 @@
 #if($column.attrNameSmall == 'updateTime' || $column.attrNameSmall == 'updateDate')##更新日期，更新时间单独处理
             $column.columnName` = now(),
 #elseif($column.isDateType == 1)
-            <if test="item.$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">`$column.columnName` = #{item.$column.attrNameSmall,jdbcType=$column.jdbcType},</if>##
+            <if test="item.$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">`$column.columnName` = date_format(#{item.$column.attrNameSmall,jdbcType=$column.jdbcType},'%Y-%m-%d %H:%i:%s'),</if>##
 
             <if test="item.$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">`$column.columnName` = null,</if>##
 #else

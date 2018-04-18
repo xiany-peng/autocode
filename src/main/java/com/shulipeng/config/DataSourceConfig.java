@@ -68,6 +68,7 @@ public class DataSourceConfig {
                 }
             }
         });
+        //设置线程不是守护进程
         restartThread.setDaemon(false);
         restartThread.start();
     }
