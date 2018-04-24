@@ -62,7 +62,7 @@ function batchCode(){
     $.each(rows,function(i,v){
         tables.push(v.tableName);
     });
-    location.href = prefix + "/batchCode?tables="+JSON.parse(tables);
+    location.href = prefix + "/batchCode?tables="+JSON.stringify(tables);
 }
 
 function generatorConfig(){

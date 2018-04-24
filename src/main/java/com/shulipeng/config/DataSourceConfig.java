@@ -2,6 +2,7 @@ package com.shulipeng.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.shulipeng.AutocodeApplication;
+import com.shulipeng.utils.ResourceUtils;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public class DataSourceConfig {
     public DruidDataSource dataSource() {
         DruidDataSource dataSource = new DruidDataSource();
         try {
-            PropertiesConfiguration properties = new PropertiesConfiguration("db.properties");
+            PropertiesConfiguration properties = new PropertiesConfiguration(ResourceUtils.getResourceAddr("db.properties"));
             String driverClassName = properties.getString("driverClassName");
             dataSource.setDriverClassName(driverClassName);
             dataSource.setUrl(properties.getString("url"));
