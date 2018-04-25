@@ -116,7 +116,7 @@
 #elseif($plugin == 'layer')
     <script src="<%=basePath %>${fgPluginAddr.layerPrefix}/layer.js"></script>
 #elseif($plugin == 'select2')
-    <script src="<%=basePath%>${fgPluginAddr.select2Prefix}/select2.min.js"></script>
+    <script src="<%=basePath%>${fgPluginAddr.select2Prefix}/js/select2.min.js"></script>
 #elseif($plugin == 'uploadfive')
     <script src="<%=basePath%>${fgPluginAddr.uploadfivePrefix}/jquery.uploadifive.js"></script>
 #elseif($plugin == 'ztree')

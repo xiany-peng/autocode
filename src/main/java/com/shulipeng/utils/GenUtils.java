@@ -316,7 +316,7 @@ public class GenUtils {
      */
     private static PluginAddr getPluginAddr() {
         try {
-            return BeanUtils.propertyToBean(PluginAddr.class, new PropertiesConfiguration("addr.properties"));
+            return BeanUtils.propertyToBean(PluginAddr.class, new PropertiesConfiguration(ResourceUtils.getResourceAddr("addr.properties")));
         } catch (ConfigurationException e) {
             throw new RuntimeException("获取配置文件失败:",e);
         }

@@ -105,7 +105,7 @@
 #foreach($column in $columns)
 #if($column.columnName != $pk.columnName)##除了主键的其它列
 #if($column.attrNameSmall == 'updateTime' )##更新日期，更新时间单独处理
-            $column.columnName` = now(),
+          `$column.columnName` = now(),
 #elseif($column.isDateType == 1)
             <if test="$column.attrNameSmall != null and $column.attrNameSmall.trim() != '' ">`$column.columnName` = date_format(#{$column.attrNameSmall,jdbcType=$column.jdbcType},'%Y-%m-%d %H:%i:%s'),</if>
             <if test="$column.attrNameSmall == null or $column.attrNameSmall.trim() == '' ">`$column.columnName` = null,</if>
